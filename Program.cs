@@ -1,6 +1,7 @@
 using Microsoft.AspNetCore.Mvc.Filters;
 using Microsoft.OpenApi.Models;
 using System.Reflection;
+using uniform_player.Domain.Interfaces.General;
 using uniform_player.Domain.Interfaces.Services;
 using uniform_player.Infrastructure.Exceptions;
 using uniform_player.Infrastructure.General;
@@ -35,8 +36,8 @@ namespace uniform_player
             builder.Services.AddMvc(options => options.Filters.Add(typeof(ApiExceptionFilter)));
             builder.Services.AddControllers();
             builder.Services.AddTransient<IScenarioService, ScenarioService>();
-            builder.Services.AddSingleton<ScenarioManager>();
-            builder.Services.AddSingleton<TransitionManager>();
+            builder.Services.AddSingleton<IScenarioManager,ScenarioManager>();
+            builder.Services.AddSingleton<ITransitionManager,TransitionManager>();
             var app = builder.Build();
 
             app.MapControllers();

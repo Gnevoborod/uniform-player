@@ -1,37 +1,48 @@
-﻿using uniform_player.Domain.Models;
+﻿using Swashbuckle.AspNetCore.SwaggerGen;
+using uniform_player.Domain.Interfaces.General;
+using uniform_player.Domain.Models;
 
 namespace uniform_player.Infrastructure.General
 {
-    public class TransitionManager
+    public class TransitionManager : ITransitionManager
     {
-        private Dictionary<string, List<Rule>> transitions;
-        private static readonly object _lock = new object();
+        private Dictionary<string, TransitionEngine> scenarioTransitions;//содержит словарь по каждому сценарию, внутри которого словарь для каждого экрана с переходами
 
         public TransitionManager()
         {
-            transitions = new Dictionary<string, List<Rule>>();
+            scenarioTransitions = new Dictionary<string, TransitionEngine>();
         }
 
         /// <summary>
-        /// Добавляем правило перехода. Если перехода (как transition, а не правила) не существует - добавляем переход и правило
+        /// Добавляем правило перехода для конкретного сценария. Если сценария не существует - добавляем. Если перехода не существует - добавляем переход и правило
         /// </summary>
-        /// <param name="identity"></param>
-        /// <param name="rule"></param>
-        public void AddRule(string identity, Rule rule)
+        /// <param name="scenarioIdentity"></param>
+        /// <param name="transitionEngine"></param>
+        public void AddTransitions(string scenarioIdentity, TransitionEngine transitionEngine)
         {
-            lock (_lock)
+            if (ContainsTransitions(scenarioIdentity))
             {
-                if(!ContainsTransition(identity))
-                {
-                    transitions.Add(identity, new List<Rule>());
-                }
-                transitions[identity].Add(rule);
+                UpdateTransitions(scenarioIdentity, transitionEngine);
+            }
+            else
+            {
+                scenarioTransitions.Add(scenarioIdentity, transitionEngine);
             }
         }
-        
-        public bool ContainsTransition(string identity) 
+
+        public bool ContainsTransitions(string scenarioIdentity)
         {
-            return transitions.ContainsKey(identity);
+            return scenarioTransitions.ContainsKey(scenarioIdentity);//просто смотрим что для данного сценария зарегистрированы (или нет) переходы
+        }
+
+        public void UpdateTransitions(string scenarioIdentity, TransitionEngine transitionEngine)
+        {
+            scenarioTransitions[scenarioIdentity] = transitionEngine;
+        }
+
+        public TransitionEngine GetTransitions(string scenarioIdentity)
+        {
+            return scenarioTransitions[scenarioIdentity];
         }
     }
 }

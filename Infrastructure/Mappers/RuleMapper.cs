@@ -12,12 +12,15 @@ namespace uniform_player.Infrastructure.Mappers
             foreach (RuleDto dto in dtos)
             {
                 var rule = dto.FromDtoToModel();
-                if (dto.Conditions?.Count > 0)
-                    rule.Conditions = new List<Condition>();
-                foreach(var condition in dto.Conditions)
+                if (dto.Conditions != null)
                 {
-                    rule.Conditions?.Add(condition.FromDtoToModel());
-                }    
+                    if (dto.Conditions.Count > 0)
+                        rule.Conditions = new List<Condition>();
+                    foreach (var condition in dto.Conditions)
+                    {
+                        rule.Conditions?.Add(condition.FromDtoToModel());
+                    }
+                }
                 result.Add(rule);
             }
             return result;
@@ -27,11 +30,8 @@ namespace uniform_player.Infrastructure.Mappers
         {
             if (dto == null)
                 return default!;
-            ConditionType conditionType;
-            Enum.TryParse(dto.ConditionType, out conditionType);
             return new Rule
             {
-                ConditionType = conditionType,
                 Conditions = null,//тут должна быть норм логика
                 NextScreen = dto.NextScreen
             };

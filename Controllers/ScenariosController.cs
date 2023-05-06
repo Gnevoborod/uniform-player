@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using uniform_player.Controllers.Dtos.Interactive;
 using uniform_player.Controllers.Dtos.ScenarioCreation;
+using uniform_player.Domain.Interfaces.General;
 using uniform_player.Domain.Interfaces.Services;
 using uniform_player.Domain.Models;
 using uniform_player.Infrastructure.General;
@@ -14,11 +15,13 @@ namespace uniform_player.Controllers
     public class ScenariosController:Controller
     {
         private readonly IScenarioService _scenarioService;
-        private readonly ScenarioManager _scenarioManager;
-        public ScenariosController(IScenarioService scenarioService, ScenarioManager scenarioManager) 
+        private readonly IScenarioManager _scenarioManager;
+        private readonly ITransitionManager _transitionManager;
+        public ScenariosController(IScenarioService scenarioService, IScenarioManager scenarioManager, ITransitionManager transitionManager) 
         {
             _scenarioService = scenarioService;
             _scenarioManager = scenarioManager;
+            _transitionManager = transitionManager;
         }
         /// <summary>
         /// Отдаёт загруженный по данному идентификатору сценарий
@@ -31,7 +34,8 @@ namespace uniform_player.Controllers
         {
             //тут надо будет нормальный маппер потом сделать
             //var manager = ScenarioManager.GetInstance();
-            return Ok(_scenarioManager.GetScenario(identity));
+            //return Ok(_scenarioManager.GetScenario(identity));
+            return Ok(_transitionManager.GetTransitions(identity));
         }
 
 
@@ -47,9 +51,10 @@ namespace uniform_player.Controllers
         {
             Scenario scenario = new Scenario();
             scenario = uploadScenarioDto.FromDtoToModel();
-            // ScenarioManager manager = ScenarioManager.GetInstance();
+            TransitionEngine transitionEngine = uploadScenarioDto.Transitions.MakeDictionary();
+            _transitionManager.AddTransitions(identity, transitionEngine);
             _scenarioManager.AddScenario(identity, scenario);
-            return Ok(scenario);
+            return Ok(transitionEngine);
         }
 
 

@@ -17,15 +17,17 @@ namespace uniform_player.Infrastructure.Mappers
             foreach (ScreenDto screenDto in dto.Screens)
             {
                 Screen screen = screenDto.FromDtoToModel();
-                foreach (var components in screenDto?.Components)
+                if (screenDto.Components != null)
                 {
-                    if (screen.Components == null)
-                        screen.Components = new List<Component>(screenDto.Components.Count);
-                    var nextToAdd = dto.Components?.FirstOrDefault(cd => cd.Name == components)?.FromDtoToModel();
-                    if (nextToAdd != null)
-                        screen.Components.Add(nextToAdd);
+                    foreach (var components in screenDto.Components)
+                    {
+                        if (screen.Components == null)
+                            screen.Components = new List<Component>(screenDto.Components.Count);
+                        var nextToAdd = dto.Components?.FirstOrDefault(cd => cd.Name == components)?.FromDtoToModel();
+                        if (nextToAdd != null)
+                            screen.Components.Add(nextToAdd);
+                    }
                 }
-                screen.RulesForScreen(dto.Transitions);
                 resultScreen.Add(screen);
                 if (screen.PseudoName != null)
                 {
@@ -33,12 +35,9 @@ namespace uniform_player.Infrastructure.Mappers
                     for (int i = 0; i < count; i++)
                     {
                         var screenNext = screen.MakePseudoNamedScreen(screen.PseudoName[i]);
-                        screenNext.RulesForScreen(dto.Transitions);
                         resultScreen.Add(screenNext);
                     }
                 }
-
-
 
             }
             return scenario;

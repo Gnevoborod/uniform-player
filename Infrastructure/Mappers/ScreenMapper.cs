@@ -40,17 +40,5 @@ namespace uniform_player.Infrastructure.Mappers
             };
         }
 
-
-        public static void RulesForScreen(this Screen screen, List<TransitionDto> dto)
-        {
-            var transitions = dto.Where(td => td.ScreenSource == screen.Name);
-            foreach (var transition in transitions)
-            {
-                if(screen.Rules == null)
-                    screen.Rules = new List<Rule>(transition.Rules.Count);
-                screen.Rules=transition.Rules.FromDtoToModelList();
-            }
-        }
-
     }
 }

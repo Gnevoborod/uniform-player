@@ -1,4 +1,5 @@
 ﻿using System.ComponentModel.DataAnnotations;
+using System.Text;
 using uniform_player.Infrastructure.Exceptions;
 
 namespace uniform_player.Infrastructure.Validators
@@ -16,9 +17,19 @@ namespace uniform_player.Infrastructure.Validators
 
         protected override ValidationResult? IsValid(object? value, ValidationContext validationContext)
         {
-            if(Enum.IsDefined(testEnum,value))
+            if (value == null)
+                throw new ApiException(ExceptionEvents.EnumValidatorValueIsNull);
+            if(Enum.IsDefined(testEnum, value))
                 return ValidationResult.Success;
-            throw new ApiException(ExceptionEvents.EnumValidatorValidationFailed);
+            var enumNames = Enum.GetNames(testEnum);
+            StringBuilder sb = new StringBuilder();
+            sb.Append("[");
+            for (int i = 0; i < enumNames.Length; i++)
+            {
+                var nextItem = enumNames[i] + (i + 1 == enumNames.Length ? "]" : ", ");
+                sb.Append(nextItem);
+            }
+            throw new ApiException(ExceptionEvents.EnumValidatorValidationFailed,sb.ToString());
         }
     }
 }

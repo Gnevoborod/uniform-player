@@ -6,5 +6,10 @@
         {
             HResult = eventId.Id;
         }
+
+        public ApiException(EventId eventId, string exceptionMessage):base(message: eventId.Name +" " + exceptionMessage) 
+        {
+            HResult = eventId.Id;
+        }
     }
 }

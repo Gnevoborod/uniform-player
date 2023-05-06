@@ -1,31 +1,29 @@
 ﻿using System.Linq;
+using uniform_player.Domain.Interfaces.General;
 using uniform_player.Domain.Models;
 using uniform_player.Infrastructure.Exceptions;
 
 namespace uniform_player.Infrastructure.General
 {
-    public class ScenarioManager
+    public class ScenarioManager : IScenarioManager
     {
         private Dictionary<string, Scenario> scenarios;
-        private static readonly object _lock = new object();
 
         public ScenarioManager()
         {
             scenarios = new Dictionary<string, Scenario>();
         }
-        public void AddScenario(string identity,Scenario scenario)
+        public void AddScenario(string identity, Scenario scenario)
         {
-            lock (_lock)
+            if (ContainsScenario(identity))
             {
-                if (ContainsScenario(identity))
-                {
-                    UpdateScenario(identity, scenario);
-                }
-                else
-                {
-                    scenarios.Add(identity, scenario);
-                }
+                UpdateScenario(identity, scenario);
             }
+            else
+            {
+                scenarios.Add(identity, scenario);
+            }
+
         }
 
         public bool ContainsScenario(string identity)
@@ -41,9 +39,9 @@ namespace uniform_player.Infrastructure.General
             return scenario;
         }
 
-        public void UpdateScenario(string identity,Scenario scenario)
+        public void UpdateScenario(string identity, Scenario scenario)
         {
-            scenarios[identity]=scenario;
+            scenarios[identity] = scenario;
         }
 
 
@@ -53,7 +51,7 @@ namespace uniform_player.Infrastructure.General
                 return default!;
             return scenarios[identity]
                     .Screens
-                    .FirstOrDefault(s=>s.Name == scenarios[identity]
+                    .FirstOrDefault(s => s.Name == scenarios[identity]
                     .FirstScreen);
         }
 
