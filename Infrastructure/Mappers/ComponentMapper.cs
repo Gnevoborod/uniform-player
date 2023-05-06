@@ -13,25 +13,9 @@ namespace uniform_player.Infrastructure.Mappers
             {
                 Name = componentDto.Name,
                 Description = componentDto.Description,
-                Type = componentDto.Type,
+                Type = (ComponentType)Enum.Parse(typeof(ComponentType), componentDto.Type, true),
                 Value = componentDto.Value,
-                Properties = componentDto.Properties,
-                PseudoName = componentDto.PseudoName
-            };
-        }
-
-        public static ComponentDto FromModelToDto(this Component component)
-        {
-            if (component == null) 
-                return default!;
-            return new ComponentDto
-            {
-                Name = component.Name,
-                Description = component.Description,
-                Type = component.Type,
-                Value = component.Value,
-                Properties = component.Properties,
-                PseudoName = component.PseudoName
+                Properties = componentDto.Properties
             };
         }
     }

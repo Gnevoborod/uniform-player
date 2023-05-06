@@ -10,11 +10,11 @@ namespace uniform_player.Infrastructure.Middleware
             this.next = next;
         }
 
-        public void Invoke(HttpContext context) 
+        public async Task InvokeAsync(HttpContext context) 
         {
             string requestId = context.TraceIdentifier;
             context.Response.Headers.Add("RequestId", requestId);
-            next.Invoke(context);
+            await next.Invoke(context);
         }
     }
 }

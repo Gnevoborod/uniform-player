@@ -1,38 +1,56 @@
-﻿using uniform_player.Controllers.Dtos.ScenarioCreation;
+﻿using System.Linq;
+using System.Xml;
+using uniform_player.Controllers.Dtos.Interactive;
+using uniform_player.Controllers.Dtos.ScenarioCreation;
 using uniform_player.Domain.Models;
 
 namespace uniform_player.Infrastructure.Mappers
 {
     public static class ScreenMapper
     {
-        public static Screen FromDtoToModel(this ScreenDto screenDto)
+        public static Screen FromDtoToModel(this ScreenDto dto)
         {
-            if (screenDto == null)
+            if (dto == null)
                 return default!;
+            ScreenType screenType;
+            Enum.TryParse(dto.Type, out screenType);
             return new Screen
             {
-                Name = screenDto.Name,
-                Type = screenDto.Type,
-                Title = screenDto.Title,
-                Body = screenDto.Body,
-                PseudoName = screenDto.PseudoName,
-                Description = screenDto.Description
+                Name = dto.Name,
+                Type = screenType,
+                Title = dto.Title,
+                Components = null,//сюда изначально ничего не пишем, так как в методе маппинга добавляем сюда лист компонентов
+                PseudoName = dto.PseudoName,
+                Description = dto.Description
             };
         }
 
-        public static ScreenDto FromModelToDto(this Screen screen)
+        public static Screen MakePseudoNamedScreen(this Screen screen, string pseudoName)
         {
             if (screen == null)
                 return default!;
-            return new ScreenDto
+            return new Screen()
             {
-                Name = screen.Name,
+                Name = pseudoName,
                 Type = screen.Type,
                 Title = screen.Title,
-                Body = screen.Body,
+                Components = screen.Components,
                 PseudoName = screen.PseudoName,
                 Description = screen.Description
             };
         }
+
+
+        public static void RulesForScreen(this Screen screen, List<TransitionDto> dto)
+        {
+            var transitions = dto.Where(td => td.ScreenSource == screen.Name);
+            foreach (var transition in transitions)
+            {
+                if(screen.Rules == null)
+                    screen.Rules = new List<Rule>(transition.Rules.Count);
+                screen.Rules=transition.Rules.FromDtoToModelList();
+            }
+        }
+
     }
 }

@@ -9,7 +9,7 @@ namespace uniform_player.Controllers.Dtos.ScenarioCreation
         [EnumSet(typeof(ScreenType))]
         public string Type { get; set; }
         public string? Title { get; set; }
-        public List<string>? Body { get; set; }
+        public List<string>? Components { get; set; }
         public List<string>? PseudoName { get; set; }
         public string? Description { get; set; }
     }
