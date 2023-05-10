@@ -1,4 +1,5 @@
-﻿using Swashbuckle.AspNetCore.SwaggerGen;
+﻿using Microsoft.AspNetCore.DataProtection.KeyManagement.Internal;
+using Swashbuckle.AspNetCore.SwaggerGen;
 using uniform_player.Domain.Interfaces.General;
 using uniform_player.Domain.Models;
 
@@ -43,6 +44,12 @@ namespace uniform_player.Infrastructure.General
         public TransitionEngine GetTransitions(string scenarioIdentity)
         {
             return scenarioTransitions[scenarioIdentity];
+        }
+
+        public List<Rule> GetTransitionRulesForScreen(string scenarioIdentity, string screenName)
+        {
+            var transitionEngine = GetTransitions(scenarioIdentity);
+            return transitionEngine.Transitions[screenName];
         }
     }
 }

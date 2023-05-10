@@ -7,5 +7,10 @@
         public static EventId EnumValidatorValueIsNull = new(1002, "The value of enum expected, but null presented");
 
         public static EventId ScenarioNotPresented = new(1400, "The requested scenario doesn't presented in the list of scenarios");
+
+
+        public static EventId RulesNotExists = new(1900, "There are no rules for these screen. Check scenario or screen name");
+        public static EventId TransitionNotExists = new(1901, "Transition doesn't exist. Check the component's name or its value");
+        
     }
 }

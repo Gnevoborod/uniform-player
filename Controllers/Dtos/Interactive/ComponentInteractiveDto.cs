@@ -9,6 +9,6 @@ namespace uniform_player.Controllers.Dtos.Interactive
         [EnumSet(typeof(ComponentType))]
         public string Type { get; set; }
         public string Value { get; set; }
-        public string Properties { get; set; }
+        public string? Properties { get; set; }
     }
 }

@@ -8,5 +8,6 @@ namespace uniform_player.Domain.Interfaces.General
         bool ContainsTransitions(string scenarioIdentity);
         TransitionEngine GetTransitions(string scenarioIdentity);
         void UpdateTransitions(string scenarioIdentity, TransitionEngine transitionEngine);
+        public List<Rule> GetTransitionRulesForScreen(string scenarioIdentity, string screenName);
     }
 }

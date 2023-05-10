@@ -1,4 +1,5 @@
-﻿using uniform_player.Domain.Models;
+﻿using uniform_player.Domain.Interfaces.General;
+using uniform_player.Domain.Models;
 
 namespace uniform_player.Infrastructure.General
 {

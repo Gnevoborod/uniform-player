@@ -38,6 +38,7 @@ namespace uniform_player
             builder.Services.AddTransient<IScenarioService, ScenarioService>();
             builder.Services.AddSingleton<IScenarioManager,ScenarioManager>();
             builder.Services.AddSingleton<ITransitionManager,TransitionManager>();
+            builder.Services.AddScoped<IMover, Mover>();
             var app = builder.Build();
 
             app.MapControllers();

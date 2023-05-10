@@ -3,6 +3,6 @@
     public class PreviousScreenDto
     {
         public string Screen { get; set; }
-        public List<ComponentInteractiveDto> Components { get; set; }
+        public List<ComponentsValuesDto> ComponentsValues { get; set; }
     }
 }

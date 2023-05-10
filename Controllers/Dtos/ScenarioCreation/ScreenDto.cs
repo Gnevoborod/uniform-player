@@ -1,4 +1,5 @@
-﻿using uniform_player.Domain.Models;
+﻿using uniform_player.Controllers.Dtos.Interactive;
+using uniform_player.Domain.Models;
 using uniform_player.Infrastructure.Validators;
 
 namespace uniform_player.Controllers.Dtos.ScenarioCreation

@@ -5,44 +5,24 @@ namespace uniform_player.Infrastructure.Mappers
 {
     public static class InputOutputMapper
     {
+        //Маппить только вручную.
         public static InputOutput FromDtoToModel(this InputOutputDto inputOutputDto)
         {
             return new InputOutput
             {
+                Scenario = inputOutputDto.Scenario,
                 Screen = new ScreenInteractive
                 {
                     Name = inputOutputDto.Screen.Name,
                     Type = (ScreenType)Enum.Parse(typeof(ScreenType), inputOutputDto.Screen.Type, true),
                     Title = inputOutputDto.Screen.Title,
-                    Components = inputOutputDto.Screen.Components.ConvertAll(inputOutputDtoScreenComponent => new Component
-                    {
-                        Name = inputOutputDtoScreenComponent.Name,
-                        Type = (ComponentType)Enum.Parse(typeof(ComponentType), inputOutputDtoScreenComponent.Type, true),
-                        Value = inputOutputDtoScreenComponent.Value,
-                        Properties = inputOutputDtoScreenComponent.Properties
-                    })
+                    Components = inputOutputDto.Screen.Components.FromDtoToModelList()
                 },
-                PreviousScreens = inputOutputDto.PreviousScreens.ConvertAll(inputOutputDtoPreviousScreen => new PreviousScreen
-                {
-                    Screen = inputOutputDtoPreviousScreen.Screen,
-                    Components = inputOutputDtoPreviousScreen.Components.ConvertAll(inputOutputDtoPreviousScreenComponent => new ComponentInteractive
-                    {
-                        Name = inputOutputDtoPreviousScreenComponent.Name,
-                        Type = (ComponentType)Enum.Parse(typeof(ComponentType), inputOutputDtoPreviousScreenComponent.Type, true),
-                        Value = inputOutputDtoPreviousScreenComponent.Value,
-                        Properties = inputOutputDtoPreviousScreenComponent.Properties
-                    })
-                }),
+                PreviousScreens = inputOutputDto.PreviousScreens?.FromDtoToModelList(),
                 CurrentValues = new CurrentValues
                 {
                     Screen = inputOutputDto.CurrentValues.Screen,
-                    Components = inputOutputDto.CurrentValues.Components.ConvertAll(inputOutputDtoCurrentValuesComponent => new ComponentInteractive
-                    {
-                        Name = inputOutputDtoCurrentValuesComponent.Name,
-                        Type = (ComponentType)Enum.Parse(typeof(ComponentType), inputOutputDtoCurrentValuesComponent.Type, true),
-                        Value = inputOutputDtoCurrentValuesComponent.Value,
-                        Properties = inputOutputDtoCurrentValuesComponent.Properties
-                    })
+                    ComponentsValues = inputOutputDto.CurrentValues.ComponentsValues.FromDtoToModelList()
                 }
             };
         }

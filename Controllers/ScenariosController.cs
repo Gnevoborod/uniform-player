@@ -49,12 +49,8 @@ namespace uniform_player.Controllers
         [HttpPost("upload/{identity}")]
         public async Task<IActionResult> LoadNewScenario([FromRoute]string identity, [FromBody] UploadScenarioDto uploadScenarioDto)
         {
-            Scenario scenario = new Scenario();
-            scenario = uploadScenarioDto.FromDtoToModel();
-            TransitionEngine transitionEngine = uploadScenarioDto.Transitions.MakeDictionary();
-            _transitionManager.AddTransitions(identity, transitionEngine);
-            _scenarioManager.AddScenario(identity, scenario);
-            return Ok(transitionEngine);
+            var result = _scenarioService.LoadNewScenario(identity, uploadScenarioDto);
+            return Ok(result);
         }
 
 
@@ -67,10 +63,7 @@ namespace uniform_player.Controllers
         [HttpGet("engine/getFirstScreen/{identity}")]
         public async Task<IActionResult> GetFirstScreen([FromRoute]string identity)
         {
-            var firstScreen = _scenarioManager.GetFirstScreen(identity);
-            InputOutput inputOutput = new InputOutput();
-
-            return Ok(inputOutput.FromModelToDto(firstScreen));
+            return Ok(_scenarioService.GetFirstScreen(identity));
         }
 
         /// <summary>
@@ -79,10 +72,10 @@ namespace uniform_player.Controllers
         /// <param name="inputOutputDto"></param>
         /// <returns></returns>
         [ProducesResponseType(typeof(InputOutputDto), 200)]
-        [HttpPost("endine/getNextScreen")]
+        [HttpPost("engine/getNextScreen")]
         public async Task<IActionResult> GetNextScreen([FromBody]InputOutputDto inputOutputDto)
         {
-            return Ok();
+            return Ok(_scenarioService.GetNextScreen(inputOutputDto));
         }
 
     }

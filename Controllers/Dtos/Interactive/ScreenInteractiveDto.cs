@@ -8,7 +8,7 @@ namespace uniform_player.Controllers.Dtos.Interactive
         public string Name { get; set; }
         [EnumSet(typeof(ScreenType))]
         public string Type { get; set; }
-        public string Title { get; set; }
+        public string? Title { get; set; }
         public List<ComponentInteractiveDto> Components { get; set; }
     }
 }

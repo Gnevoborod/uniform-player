@@ -40,5 +40,18 @@ namespace uniform_player.Infrastructure.Mappers
             };
         }
 
+
+        public static ScreenInteractiveDto FromModelToDto(this Screen screen)
+        {
+            if (screen == null)
+                return default!;
+            return new ScreenInteractiveDto
+            {
+                Name = screen.Name,
+                Type = screen.Type.ToString(),
+                Title = screen.Title,
+                Components = screen.Components.FromModelToDtoList()
+            };
+        }
     }
 }
