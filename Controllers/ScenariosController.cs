@@ -4,8 +4,6 @@ using uniform_player.Controllers.Dtos.ScenarioCreation;
 using uniform_player.Domain.Interfaces.General;
 using uniform_player.Domain.Interfaces.Services;
 using uniform_player.Domain.Models;
-using uniform_player.Infrastructure.General;
-using uniform_player.Infrastructure.Mappers;
 
 namespace uniform_player.Controllers
 {

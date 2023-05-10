@@ -34,7 +34,9 @@ namespace uniform_player.Infrastructure.General
                         break;
                     foreach (var condition in rule.Conditions)
                     {
-                        satisfied = ConditionChecker.TestValue(condition.Predicate, value.Value, condition.Value!);
+                        satisfied = ConditionChecker.TestValue(condition.Predicate, value.Value!, condition.Value!);
+                        if (satisfied)
+                            break;
                     }
                     if (!satisfied)
                         break;

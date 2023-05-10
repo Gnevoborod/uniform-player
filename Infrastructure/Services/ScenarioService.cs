@@ -33,7 +33,7 @@ namespace uniform_player.Infrastructure.Services
 
         public InputOutputDto GetNextScreen(InputOutputDto inputOutputDto)
         {
-            var rules = _transitionManager.GetTransitionRulesForScreen(inputOutputDto.Scenario, inputOutputDto.Screen.Name);
+            var rules = _transitionManager.GetTransitionRulesForScreen(inputOutputDto.Scenario, inputOutputDto.CurrentValues.Screen);
             var scenario = _scenarioManager.GetScenario(inputOutputDto.Scenario);
             inputOutputDto.Screen = _mover.GetNextScreen(inputOutputDto.FromDtoToModel().CurrentValues, rules, scenario).FromModelToDto();
             if(inputOutputDto.PreviousScreens == null)
