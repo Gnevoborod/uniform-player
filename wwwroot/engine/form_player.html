@@ -1,0 +1,113 @@
+<html>
+
+<head>
+  <meta charset="utf-8" />
+  <title>
+    Универсальный плеер форм
+  </title>
+<script>
+  var xmlhttp;
+
+  if (window.XMLHttpRequest) {
+    xmlhttp = new XMLHttpRequest();
+  }
+  else {
+    xmlhttp = new ActiveXObject("Microsoft.XMLHTTP");
+  }
+
+
+  var lastDto;
+  function getFirstScreen() {
+    var scenarioIdentity = document.getElementById("scenarioName").value;
+    xmlhttp.onreadystatechange = function () {
+      if (xmlhttp.readyState == 4 && xmlhttp.status == 200) {
+        cleanBody();
+        drawFromResponse(xmlhttp.responseText);
+
+      }
+      else {
+        document.body.append = "No answer";
+
+      }
+    };
+
+    xmlhttp.open('GET', '../scenarios/engine/getFirstScreen/' + scenarioIdentity, true);
+    xmlhttp.send(null);
+  }
+
+  function drawFromResponse(responseText)
+  {
+    var responseObject = JSON.parse(responseText);
+    lastDto = responseObject;
+    var title = responseObject.screen.title;
+    document.getElementById("title").innerHTML = '<h3>' + title + '</h3>';
+    document.getElementById("body").innerHTML = getListOfComponents(responseObject.screen.components);
+  }
+
+function getListOfComponents(components)
+{
+  let result='';
+  components.forEach(element => {
+    result +=getComponent(element);
+    console.log(result);
+    console.log(element);
+  });
+  return result;
+}
+
+function getComponent(componentObject)
+{
+  switch(componentObject.type)
+  {
+    case 'Label': return getLabel(componentObject); 
+    case 'Button': return getButton(componentObject);
+    case 'TextBox': break;
+  }
+}
+
+function getLabel(label)
+{
+  return '<p>' + label.value + '</p>';
+}
+
+function getButton(btn)
+{
+  return '<button id="'+ btn.name +'" onclick = getNextScreen(this)>' + btn.value +'</button>';
+}
+
+function cleanBody()
+{
+  document.getElementById("title").innerHTML = '';
+    document.getElementById("body").innerHTML = '';
+    document.getElementById("controls").innerHTML = '';
+}
+
+function getNextScreen(sender)
+{
+  //collect all values
+  var requestObject = lastDto;
+  console.log(sender);
+  console.log(lastDto);
+
+  var currentValues = {currentValues:["ab"]};//сюда добавить подтягивание данных по компонентам - имя+значение
+  requestObject.currentValues = currentValues;
+  console.log(requestObject);
+  var request = JSON.stringify(requestObject);
+  //call
+//xmlhttp.open('POST', '../scenarios/engine/getNextScreen/' + scenarioIdentity, true);
+//xmlhttp.setRequestHeader("Content-type", "application/json");
+//xmlhttp.send(request);
+}
+</script>
+
+</head>
+
+<body style="background-color: darkslategrey;">
+  <div id="container" style="align-content: center;">
+    <div id="title" style="background-color: darkslategrey; color: darkcyan; margin-top: 4px; margin-bottom: 4px;">Выберите сценарий</div>
+    <div id="body" style="background-color: darkslategrey; color: darkcyan; margin-top: 5px; margin-bottom: 5px"><input id="scenarioName" value="" style="background-color: darkseagreen;"></div>
+    <div id="controls" style="background-color: darkslategrey; color: darkcyan; margin-top: 4px; margin-bottom: 4px"><button onclick="getFirstScreen()">Click</button></div>
+  </div>
+</body>
+
+</html>
