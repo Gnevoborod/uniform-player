@@ -10,6 +10,7 @@
   <ItemGroup>
     <Folder Include="Domain\Interfaces\Repositories\" />
     <Folder Include="Infrastructure\Repositories\" />
+    <Folder Include="wwwroot\swagger-ui\" />
   </ItemGroup>
 
   <ItemGroup>

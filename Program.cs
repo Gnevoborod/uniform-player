@@ -43,7 +43,12 @@ namespace uniform_player
 
             app.MapControllers();
             app.UseSwagger();
-            app.UseSwaggerUI();
+            app.UseSwaggerUI( c =>
+{
+                c.SwaggerEndpoint("/swagger/v1/swagger.json", "MyAPI");
+                c.InjectStylesheet("/swagger-ui/SwaggerDark.css");
+            });
+            app.UseStaticFiles();
             app.UseMiddleware<RequestIdentityMiddleware>();
             app.Run();
         }
