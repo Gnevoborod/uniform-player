@@ -1,6 +1,5 @@
 ﻿namespace uniform_player.Domain.Models
 {
-    public enum Predicate { Equal, NotEqual, MoreThan, LessThan, Clicked }
     public class Condition
     {
         public string? Description { get; set; }

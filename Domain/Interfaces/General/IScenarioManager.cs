@@ -6,9 +6,8 @@ namespace uniform_player.Domain.Interfaces.General
     {
         void AddScenario(string identity, Scenario scenario);
         bool ContainsScenario(string identity);
-        Screen? GetFirstScreen(string identity);
-        Screen? GetNextScreen(string identity, CurrentValues currentValues);
         Scenario GetScenario(string identity);
         void UpdateScenario(string identity, Scenario scenario);
+        public Screen? GetSpecificScreen(string identity, string screenName);
     }
 }

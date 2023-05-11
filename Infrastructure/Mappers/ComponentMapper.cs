@@ -16,7 +16,8 @@ namespace uniform_player.Infrastructure.Mappers
                 Description = componentDto.Description,
                 Type = (ComponentType)Enum.Parse(typeof(ComponentType), componentDto.Type, true),
                 Value = componentDto.Value,
-                Properties = componentDto.Properties
+                Properties = componentDto.Properties,
+                Label = componentDto.Label
             };
         }
 
@@ -30,7 +31,8 @@ namespace uniform_player.Infrastructure.Mappers
                 Name = componentInteractiveDto.Name,
                 Type = (ComponentType)Enum.Parse(typeof(ComponentType), componentInteractiveDto.Type, true),
                 Value = componentInteractiveDto.Value,
-                Properties = componentInteractiveDto.Properties
+                Properties = componentInteractiveDto.Properties,
+                Label = componentInteractiveDto.Label
             };
         }
 
@@ -55,7 +57,8 @@ namespace uniform_player.Infrastructure.Mappers
                 Name = component.Name,
                 Type = component.Type.ToString(),
                 Value = component.Value,
-                Properties = component.Properties
+                Properties = component.Properties,
+                Label = component.Label
             };
         }
 

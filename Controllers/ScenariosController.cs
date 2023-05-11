@@ -76,5 +76,17 @@ namespace uniform_player.Controllers
             return Ok(_scenarioService.GetNextScreen(inputOutputDto));
         }
 
+        /// <summary>
+        /// Основной метод вычисления предыдущего экрана для перехода
+        /// </summary>
+        /// <param name="inputOutputDto"></param>
+        /// <returns></returns>
+        [ProducesResponseType(typeof(InputOutputDto), 200)]
+        [HttpPost("engine/getPreviousScreen")]
+        public async Task<IActionResult> GetPreviousScreen([FromBody] InputOutputDto inputOutputDto)
+        {
+            return Ok(_scenarioService.GetPreviousScreen(inputOutputDto));
+        }
+
     }
 }

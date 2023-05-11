@@ -2,7 +2,7 @@
 {
     public class ComponentsValuesDto
     {
-        public string ComponentName { get; set; }
+        public string? ComponentName { get; set; }
 
         public string? Value { get; set; }
     }

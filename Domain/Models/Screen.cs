@@ -1,6 +1,5 @@
 ﻿namespace uniform_player.Domain.Models
 {
-    public enum ScreenType { Common };
     public class Screen
     {
         public string Name { get; set; } = default!;

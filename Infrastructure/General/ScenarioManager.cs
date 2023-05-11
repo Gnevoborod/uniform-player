@@ -31,35 +31,23 @@ namespace uniform_player.Infrastructure.General
             return scenarios.ContainsKey(identity);
         }
 
-        public Scenario GetScenario(string identity)
+        public Scenario GetScenario(string scenarioIdentity)
         {
             Scenario scenario;
-            if (!scenarios.TryGetValue(identity, out scenario))
+            if (!scenarios.TryGetValue(scenarioIdentity, out scenario))
                 throw new ApiException(ExceptionEvents.ScenarioNotPresented);
             return scenario;
         }
 
-        public void UpdateScenario(string identity, Scenario scenario)
+        public void UpdateScenario(string scenarioIdentity, Scenario scenario)
         {
-            scenarios[identity] = scenario;
+            scenarios[scenarioIdentity] = scenario;
         }
 
 
-        public Screen? GetFirstScreen(string identity)
+        public Screen? GetSpecificScreen(string scenarioIdentity, string screenName)
         {
-            if (!ContainsScenario(identity))
-                return default!;
-            return scenarios[identity]
-                    .Screens
-                    .FirstOrDefault(s => s.Name == scenarios[identity]
-                    .FirstScreen);
-        }
-
-        public Screen? GetNextScreen(string identity, CurrentValues currentValues)
-        {
-            if (!ContainsScenario(identity))
-                return default!;
-            return new();
+            return scenarios[scenarioIdentity].Screens.FirstOrDefault(s => s.Name == screenName);
         }
 
     }

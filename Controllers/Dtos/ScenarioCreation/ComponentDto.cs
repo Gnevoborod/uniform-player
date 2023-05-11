@@ -11,5 +11,6 @@ namespace uniform_player.Controllers.Dtos.ScenarioCreation
         public string Type { get; set; }
         public string Value { get; set; }
         public string? Properties { get; set; }
+        public string? Label { get; set; }
     }
 }

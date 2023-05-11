@@ -2,111 +2,206 @@
 
 <head>
   <meta charset="utf-8" />
+  <link rel="stylesheet" href="../css/bootstrap_flatly.css">
   <title>
     Универсальный плеер форм
   </title>
-<script>
-  var xmlhttp;
+  <script>
+    var xmlhttp;
 
-  if (window.XMLHttpRequest) {
-    xmlhttp = new XMLHttpRequest();
-  }
-  else {
-    xmlhttp = new ActiveXObject("Microsoft.XMLHTTP");
-  }
+    if (window.XMLHttpRequest) {
+      xmlhttp = new XMLHttpRequest();
+    }
+    else {
+      xmlhttp = new ActiveXObject("Microsoft.XMLHTTP");
+    }
 
 
-  var lastDto;
-  function getFirstScreen() {
-    var scenarioIdentity = document.getElementById("scenarioName").value;
-    xmlhttp.onreadystatechange = function () {
-      if (xmlhttp.readyState == 4 && xmlhttp.status == 200) {
-        cleanBody();
-        drawFromResponse(xmlhttp.responseText);
+    var lastDto;
+    let hasButton = false;
+    function getFirstScreen() {
+      var scenarioIdentity = document.getElementById("scenarioName").value;
+      xmlhttp.onreadystatechange = function () {
+        if (xmlhttp.readyState == 4 && xmlhttp.status == 200) {
+          cleanBody();
+          drawFromResponse(xmlhttp.responseText);
+
+        }
+        else {
+          document.body.append = "No answer";
+
+        }
+      };
+
+      xmlhttp.open('GET', '../scenarios/engine/getFirstScreen/' + scenarioIdentity, true);
+      xmlhttp.send(null);
+    }
+
+    function drawFromResponse(responseText) {
+      var responseObject = JSON.parse(responseText);
+      lastDto = responseObject;
+      var title = responseObject.screen.title;
+      document.getElementById("title").innerHTML = '<h5 style="margin-top: 8px;" class="card-title">' + title + '</h5>';
+      document.getElementById("body").innerHTML = getListOfComponents(responseObject.screen.components);
+      if (!hasButton) {
+        document.getElementById("controls").innerHTML = '<button onclick="getNextScreen()" class="btn btn-dark">Далее</button>';
+      }
+    }
+
+    function getListOfComponents(components) {
+      let result = '';
+      components.forEach(element => {
+        result += getComponent(element);
+      });
+      return result;
+    }
+
+    function getComponent(componentObject) {
+      switch (componentObject.type) {
+        case 'Label': return getLabel(componentObject);
+        case 'Button': return getButton(componentObject);
+        case 'TextBox': return getTextBox(componentObject);
+        case 'CheckBox': return getCheckBox(componentObject);
+        case 'TextArea': return getTextArea(componentObject);
+        case 'RadioButton':return getRadioButton(componentObject);
+      }
+    }
+
+    function getLabel(label) {
+      return '<p name="' + label.name + '" class="uniform-player-component card-text">' + label.value + '</p>';
+    }
+
+    function getButton(btn) {
+      hasButton = true;
+      return '<button class="uniform-player-component btn btn-dark" name="' + btn.name + '" onclick = getNextScreen(this) value="'+btn.value+'">'+btn.value+'</button>';
+    }
+
+    function getTextBox(textbox) {
+      return '<div class="form-group" style="text-align: left;"><label style="margin:0 auto;margin-left:3%" class="col-form-label mt-4" for="'+textbox.name+'">'+textbox.label+'</label><input type="text" style="width:96%; margin-left:2%" class="uniform-player-component form-control" placeholder="' + textbox.properties + '" id="' + textbox.name + '" name="' + textbox.name + '" value="' + textbox.value + '"></div>';
+    } 
+
+    function getCheckBox(checkbox)
+    {
+      var checked = (checkbox.value==null||checkbox.value==0)?' ':"checked";
+      return '<div class="form-check" style="text-align: left;"><input class="uniform-player-component form-check-input" style="margin:0 auto;margin-top:8px;" type="checkbox" value="'+checkbox.value+'" id="'+checkbox.name+'" onclick="switchValue(this)" '+checked+' name="'+checkbox.name+'"><label class="form-check-label" style="margin:0 auto;margin-top:4px;margin-left:4px;" for="'+checkbox.name+'">'+checkbox.label+'</label></div>';
+    }
+
+    function switchValue(obj)
+    {
+      
+      if(obj.value==null || obj.value==0)
+        obj.value=1;
+      else
+        obj.value=0;
+    }
+
+    function getTextArea(textarea)
+    {
+      return '<div class="form-group" style="text-align: left;"><label for="'+textarea.name+'" style="margin:0 auto;margin-left:3%" class="form-label mt-4">'+textarea.label+'</label><textarea style="width:96%; margin-left:2%" name="'+textarea.name+'" value="'+textarea.value+'" class="uniform-player-component form-control" id="'+textarea.name+'" rows="3">'+textarea.value+'</textarea></div>';
+    }
+
+    function getRadioButton(radio)
+    {
+      var checked = (radio.value==null||radio.value==0)?' ':"checked";
+      return '<div class="form-check" style="text-align: left;"><input class="uniform-player-component  form-check-input"  style="margin:0 auto; margin-top:8px;" type="radio" name="'+radio.name+'" id="'+radio.name+'" onclick="switchValue(this)" value="'+radio.value+'" '+checked+'><label style="margin-top:4px;margin-left:4px;" class="form-check-label" for="'+radio.name+'">'+radio.label+'</label></div>';
+    }
+
+    function cleanBody() {
+      document.getElementById("title").innerHTML = '';
+      document.getElementById("body").innerHTML = '';
+      document.getElementById("controls").innerHTML = '';
+      hasButton = false;
+    }
+
+    function getNextScreen(sender) {
+      //collect all values
+      var requestObject = lastDto;
+      //console.log(sender);
+      //console.log(lastDto);
+
+      var currentValues = { screen: lastDto.screen.name, componentsValues: getCurrentValues() };//сюда добавить подтягивание данных по компонентам - имя+значение
+      
+      requestObject.currentValues = currentValues;
+
+      var request = JSON.stringify(requestObject);
+      //console.log(request);
+
+      xmlhttp.onreadystatechange = function () {
+        if (xmlhttp.readyState == 4 && xmlhttp.status == 200) {
+          cleanBody();
+          drawFromResponse(xmlhttp.responseText);
+
+        }
+        else {
+          document.body.append = "No answer";
+
+        }
+      };
+      //call
+      xmlhttp.open('POST', '../scenarios/engine/getNextScreen/', true);
+      xmlhttp.setRequestHeader("Content-type", "application/json");
+      xmlhttp.send(request);
+    }
+
+
+    function getPreviousScreen()
+    {
+      xmlhttp.onreadystatechange = function () {
+        if (xmlhttp.readyState == 4 && xmlhttp.status == 200) {
+          cleanBody();
+          drawFromResponse(xmlhttp.responseText);
+
+        }
+        else {
+          document.body.append = "No answer";
+
+        }
+      };
+      var request = JSON.stringify(lastDto);
+      xmlhttp.open('POST', '../scenarios/engine/getPreviousScreen/', true);
+      xmlhttp.setRequestHeader("Content-type", "application/json");
+      xmlhttp.send(request);
+    }
+
+    function getCurrentValues() {
+      var bodyArray = document.getElementsByClassName("uniform-player-component");
+      
+      var val = '';
+      var cmpName = '';
+      let result = new Array();
+      for (let i = 0; i < bodyArray.length; i++) {
+        var element = bodyArray[i];
+        cmpName = element.name ?? null;
+        val = element.value ?? null;
+        result[i] = { componentName: cmpName, value: val };
 
       }
-      else {
-        document.body.append = "No answer";
-
-      }
-    };
-
-    xmlhttp.open('GET', '../scenarios/engine/getFirstScreen/' + scenarioIdentity, true);
-    xmlhttp.send(null);
-  }
-
-  function drawFromResponse(responseText)
-  {
-    var responseObject = JSON.parse(responseText);
-    lastDto = responseObject;
-    var title = responseObject.screen.title;
-    document.getElementById("title").innerHTML = '<h3>' + title + '</h3>';
-    document.getElementById("body").innerHTML = getListOfComponents(responseObject.screen.components);
-  }
-
-function getListOfComponents(components)
-{
-  let result='';
-  components.forEach(element => {
-    result +=getComponent(element);
-    console.log(result);
-    console.log(element);
-  });
-  return result;
-}
-
-function getComponent(componentObject)
-{
-  switch(componentObject.type)
-  {
-    case 'Label': return getLabel(componentObject); 
-    case 'Button': return getButton(componentObject);
-    case 'TextBox': break;
-  }
-}
-
-function getLabel(label)
-{
-  return '<p>' + label.value + '</p>';
-}
-
-function getButton(btn)
-{
-  return '<button id="'+ btn.name +'" onclick = getNextScreen(this)>' + btn.value +'</button>';
-}
-
-function cleanBody()
-{
-  document.getElementById("title").innerHTML = '';
-    document.getElementById("body").innerHTML = '';
-    document.getElementById("controls").innerHTML = '';
-}
-
-function getNextScreen(sender)
-{
-  //collect all values
-  var requestObject = lastDto;
-  console.log(sender);
-  console.log(lastDto);
-
-  var currentValues = {currentValues:["ab"]};//сюда добавить подтягивание данных по компонентам - имя+значение
-  requestObject.currentValues = currentValues;
-  console.log(requestObject);
-  var request = JSON.stringify(requestObject);
-  //call
-//xmlhttp.open('POST', '../scenarios/engine/getNextScreen/' + scenarioIdentity, true);
-//xmlhttp.setRequestHeader("Content-type", "application/json");
-//xmlhttp.send(request);
-}
-</script>
+      return result;
+    }
+  </script>
 
 </head>
 
-<body style="background-color: darkslategrey;">
-  <div id="container" style="align-content: center;">
-    <div id="title" style="background-color: darkslategrey; color: darkcyan; margin-top: 4px; margin-bottom: 4px;">Выберите сценарий</div>
-    <div id="body" style="background-color: darkslategrey; color: darkcyan; margin-top: 5px; margin-bottom: 5px"><input id="scenarioName" value="" style="background-color: darkseagreen;"></div>
-    <div id="controls" style="background-color: darkslategrey; color: darkcyan; margin-top: 4px; margin-bottom: 4px"><button onclick="getFirstScreen()">Click</button></div>
+<body>
+  <div><p></p></div>
+  <div id="container" style="margin-top: 14px;margin-bottom: 4px; text-align: center; width:30%;margin:0 auto;" class="text-white bg-secondary">
+    <button
+        onclick="getPreviousScreen()" class="btn btn-dark">Назад</button>
+    <div class="card-body">
+      <div class="card-title" id="title"
+        style="margin-top: 4px; margin-bottom: 4px;height: 10%;width:100%;overflow-y:auto;margin:0 auto;">
+        <h5 style="margin-top: 8px;" class="card-title">
+          Выберите сценарий</h5>
+      </div>
+      <div class="card-text" id="body"
+        style="margin-top: 5px; margin-bottom: 5px;height: 60%; width:auto;overflow-y:auto;margin:0 auto; align-items: center;">
+        <input type="text" style="width:40%; margin:0 auto;" class="form-control" placeholder="Идентификатор сценария"
+          id="scenarioName" value="">
+      </div>
+    </div>
+    <div id="controls" class="card-text"
+      style="margin-top: 4px; margin-bottom: 4px;height:5%;width:100%;overflow-y:auto;margin:0 auto;"><button
+        onclick="getFirstScreen()" class="btn btn-dark">Начать</button></div>
   </div>
 </body>
 

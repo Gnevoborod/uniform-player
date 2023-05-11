@@ -31,7 +31,7 @@ namespace uniform_player.Infrastructure.General
                 foreach (var value in currentValues.ComponentsValues)
                 {
                     if (rule.Conditions.FirstOrDefault(r=>r.ComponentName == value.ComponentName) == null)
-                        break;
+                        continue;
                     foreach (var condition in rule.Conditions)
                     {
                         satisfied = ConditionChecker.TestValue(condition.Predicate, value.Value!, condition.Value!);
@@ -46,5 +46,6 @@ namespace uniform_player.Infrastructure.General
             }
             throw new ApiException(ExceptionEvents.TransitionNotExists);
         }
+
     }
 }

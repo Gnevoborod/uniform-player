@@ -11,6 +11,7 @@
 
         public static EventId RulesNotExists = new(1900, "There are no rules for these screen. Check scenario or screen name");
         public static EventId TransitionNotExists = new(1901, "Transition doesn't exist. Check the component's name or its value");
+        public static EventId NoPreviousScreen= new(1902, "There is no previous screen to response (start of scenario was reached)");
         
     }
 }

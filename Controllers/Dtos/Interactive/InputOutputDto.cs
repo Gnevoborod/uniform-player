@@ -7,6 +7,6 @@ namespace uniform_player.Controllers.Dtos.Interactive
         public string Scenario { get; set; }
         public ScreenInteractiveDto Screen { get; set; }
         public List<PreviousScreenDto>? PreviousScreens { get; set; }
-        public CurrentValuesDto CurrentValues { get; set; }
+        public CurrentValuesDto? CurrentValues { get; set; }
     }
 }

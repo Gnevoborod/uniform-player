@@ -4,6 +4,7 @@ using uniform_player.Controllers.Dtos.ScenarioCreation;
 using uniform_player.Domain.Interfaces.General;
 using uniform_player.Domain.Interfaces.Services;
 using uniform_player.Domain.Models;
+using uniform_player.Infrastructure.Exceptions;
 using uniform_player.Infrastructure.General;
 using uniform_player.Infrastructure.Mappers;
 
@@ -56,6 +57,25 @@ namespace uniform_player.Infrastructure.Services
                 PreviousScreens = null,
                 CurrentValues = null
             };
+        }
+
+        public InputOutputDto GetPreviousScreen(InputOutputDto inputOutputDto)
+        {
+            var lastPreviousScreen = inputOutputDto.PreviousScreens.LastOrDefault();
+            if (lastPreviousScreen == null)
+                throw new ApiException(ExceptionEvents.NoPreviousScreen);
+            var screenToShow = _scenarioManager.GetSpecificScreen(inputOutputDto.Scenario, lastPreviousScreen.Screen);
+            inputOutputDto.PreviousScreens.Remove(lastPreviousScreen);
+            var components = lastPreviousScreen.ComponentsValues;
+            inputOutputDto.Screen = screenToShow.FromModelToDto();
+            foreach(var component in components)
+            {
+                var screenComponent = inputOutputDto.Screen.Components.FirstOrDefault(sc => sc.Name == component.ComponentName);
+                if(screenComponent != null)
+                    screenComponent.Value = component.Value;
+            }
+            inputOutputDto.CurrentValues = null;
+            return inputOutputDto;
         }
     }
 }

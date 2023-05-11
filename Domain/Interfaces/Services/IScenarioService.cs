@@ -10,5 +10,6 @@ namespace uniform_player.Domain.Interfaces.Services
 
         public InputOutputDto GetNextScreen(InputOutputDto inputOutputDto);
         public InputOutputDto GetFirstScreen(string scenarioIdentity);
+        public InputOutputDto GetPreviousScreen(InputOutputDto inputOutputDto);
     }
 }

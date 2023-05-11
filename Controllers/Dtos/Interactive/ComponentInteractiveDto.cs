@@ -10,5 +10,6 @@ namespace uniform_player.Controllers.Dtos.Interactive
         public string Type { get; set; }
         public string Value { get; set; }
         public string? Properties { get; set; }
+        public string? Label { get; set; }
     }
 }
