@@ -2,6 +2,7 @@
 using uniform_player.Controllers.Dtos.Interactive;
 using uniform_player.Controllers.Dtos.ScenarioCreation;
 using uniform_player.Domain.Interfaces.General;
+using uniform_player.Domain.Interfaces.Repositories;
 using uniform_player.Domain.Interfaces.Services;
 using uniform_player.Domain.Models;
 using uniform_player.Infrastructure.Exceptions;
@@ -14,21 +15,30 @@ namespace uniform_player.Infrastructure.Services
     {
         private readonly ITransitionManager _transitionManager;
         private readonly IScenarioManager _scenarioManager;
+        private readonly IScenarioRepository _scenarioRepository;
         public IMover _mover;
-        public ScenarioService(ITransitionManager transitionManager, IScenarioManager scenarioManager, IMover mover)
+        private static bool dataLoaded;
+        public ScenarioService(ITransitionManager transitionManager, IScenarioManager scenarioManager, IMover mover, IScenarioRepository scenarioRepository)
         {
             _transitionManager = transitionManager;
             _scenarioManager = scenarioManager;
+            _scenarioRepository = scenarioRepository;
             _mover = mover;
+            if (!dataLoaded)
+            {
+                LoadScenariosFromDbAsync().GetAwaiter().GetResult();
+                dataLoaded = true;
+            }
         }
 
-        public TransitionEngine LoadNewScenario(string identity, UploadScenarioDto uploadScenarioDto)//после завершения разработки транзишнэнжин - поменять на void
+        public async Task<TransitionEngine> LoadNewScenario(string identity, UploadScenarioDto uploadScenarioDto)//после завершения разработки транзишнэнжин - поменять на void
         {
             Scenario scenario = new Scenario();
             scenario = uploadScenarioDto.FromDtoToModel();
             TransitionEngine transitionEngine = uploadScenarioDto.Transitions.MakeDictionary();
             _transitionManager.AddTransitions(identity, transitionEngine);
             _scenarioManager.AddScenario(identity, scenario);
+            await _scenarioRepository.SaveScenario(uploadScenarioDto.FromDtoToEntity(identity, ScenarioState.Published));
             return transitionEngine;
         }
 
@@ -76,6 +86,24 @@ namespace uniform_player.Infrastructure.Services
             }
             inputOutputDto.CurrentValues = null;
             return inputOutputDto;
+        }
+
+
+        public async Task LoadScenariosFromDbAsync()
+        {
+            var scenarios = await _scenarioRepository.GetAllScenariosAsync(ScenarioState.Published);
+            if (scenarios == null)
+                return;
+            foreach(var scenario in scenarios)
+            {
+                var scenarioDto = scenario.FromEntityToDto();
+                var scenarioModel = scenarioDto?.FromDtoToModel();
+                if (scenarioDto == null || scenarioModel == null)
+                    continue;
+                TransitionEngine transitionEngine = scenarioDto.Transitions.MakeDictionary();
+                _transitionManager.AddTransitions(scenario.Name, transitionEngine);
+                _scenarioManager.AddScenario(scenario.Name, scenarioModel);
+            }
         }
     }
 }

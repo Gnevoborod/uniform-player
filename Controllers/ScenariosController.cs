@@ -1,9 +1,11 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using System.ComponentModel.DataAnnotations;
 using uniform_player.Controllers.Dtos.Interactive;
 using uniform_player.Controllers.Dtos.ScenarioCreation;
 using uniform_player.Domain.Interfaces.General;
 using uniform_player.Domain.Interfaces.Services;
 using uniform_player.Domain.Models;
+using uniform_player.Infrastructure.Mappers;
 
 namespace uniform_player.Controllers
 {
@@ -28,7 +30,7 @@ namespace uniform_player.Controllers
         /// <returns></returns>
         [ProducesResponseType(typeof(Scenario), 200)]
         [HttpGet("upload/{identity}")]
-        public IActionResult GetScenario([FromRoute]string identity) 
+        public IActionResult GetScenario([FromRoute, MaxLength(256)] string identity) 
         {
             //тут надо будет нормальный маппер потом сделать
             //var manager = ScenarioManager.GetInstance();
@@ -45,9 +47,9 @@ namespace uniform_player.Controllers
         /// <returns></returns>
         [ProducesResponseType(typeof(Scenario), 200)]
         [HttpPost("upload/{identity}")]
-        public async Task<IActionResult> LoadNewScenario([FromRoute]string identity, [FromBody] UploadScenarioDto uploadScenarioDto)
+        public async Task<IActionResult> LoadNewScenario([FromRoute, MaxLength(256)] string identity, [FromBody] UploadScenarioDto uploadScenarioDto)
         {
-            var result = _scenarioService.LoadNewScenario(identity, uploadScenarioDto);
+            var result = await _scenarioService.LoadNewScenario(identity, uploadScenarioDto);
             return Ok(result);
         }
 
@@ -59,7 +61,7 @@ namespace uniform_player.Controllers
         /// <returns></returns>
         [ProducesResponseType(typeof(InputOutputDto), 200)]
         [HttpGet("engine/getFirstScreen/{identity}")]
-        public async Task<IActionResult> GetFirstScreen([FromRoute]string identity)
+        public async Task<IActionResult> GetFirstScreen([FromRoute, MaxLength(256)] string identity)
         {
             return Ok(_scenarioService.GetFirstScreen(identity));
         }

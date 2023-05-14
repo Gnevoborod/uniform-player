@@ -1,4 +1,7 @@
-﻿using uniform_player.Controllers.Dtos.ScenarioCreation;
+﻿using System.Text.Json;
+using System.Text.Json.Serialization;
+using uniform_player.Controllers.Dtos.ScenarioCreation;
+using uniform_player.Database.Entities;
 using uniform_player.Domain.Models;
 using uniform_player.Infrastructure.Mappers;
 namespace uniform_player.Infrastructure.Mappers
@@ -42,6 +45,27 @@ namespace uniform_player.Infrastructure.Mappers
             }
             return scenario;
 
+        }
+
+        public static ScenarioEntity FromDtoToEntity(this UploadScenarioDto dto, string scenarioIdentity, ScenarioState scenarioState)
+        {
+            if (dto == null)
+                return default!;
+            if (string.IsNullOrEmpty(scenarioIdentity))
+                return default!;
+            return new ScenarioEntity
+            {
+                ScenarioState = scenarioState,
+                Name = scenarioIdentity,
+                Body = JsonSerializer.Serialize(dto)
+            };
+        }
+
+        public static UploadScenarioDto? FromEntityToDto(this ScenarioEntity scenarioEntity)
+        {
+            if(scenarioEntity == null || scenarioEntity.Body == null)
+                    return default!;
+            return JsonSerializer.Deserialize<UploadScenarioDto>(scenarioEntity.Body);
         }
     }
 }

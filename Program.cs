@@ -7,14 +7,21 @@ using uniform_player.Infrastructure.Exceptions;
 using uniform_player.Infrastructure.General;
 using uniform_player.Infrastructure.Middleware;
 using uniform_player.Infrastructure.Services;
+using NLog;
+using NLog.Web;
+using Microsoft.EntityFrameworkCore.Query;
+using uniform_player.Database;
+using uniform_player.Domain.Interfaces.Repositories;
+using uniform_player.Infrastructure.Repositories;
 
 namespace uniform_player
 {
     public class Program
     {
-        public static void Main(string[] args)
+        public static async Task Main(string[] args)
         {
             var builder = WebApplication.CreateBuilder(args);
+            var logger = NLog.LogManager.Setup().LoadConfigurationFromAppSettings().GetCurrentClassLogger();
             builder.Services.AddSwaggerGen(options =>
             {
 
@@ -32,12 +39,16 @@ namespace uniform_player
 
 
             });
+            //builder.Logging.ClearProviders();
+            builder.Host.UseNLog();
 
+            builder.Services.AddDbContext<UniformPlayerDbContext>(ServiceLifetime.Scoped);
             builder.Services.AddMvc(options => options.Filters.Add(typeof(ApiExceptionFilter)));
             builder.Services.AddControllers();
             builder.Services.AddTransient<IScenarioService, ScenarioService>();
             builder.Services.AddSingleton<IScenarioManager,ScenarioManager>();
             builder.Services.AddSingleton<ITransitionManager,TransitionManager>();
+            builder.Services.AddScoped<IScenarioRepository, ScenarioRepository>();
             builder.Services.AddScoped<IMover, Mover>();
             var app = builder.Build();
 
@@ -51,6 +62,8 @@ namespace uniform_player
             app.UseStaticFiles();
             app.UseMiddleware<RequestIdentityMiddleware>();
             app.Run();
+
+           
         }
     }
 }

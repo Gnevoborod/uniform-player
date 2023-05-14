@@ -1,0 +1,75 @@
+<html>
+
+<head>
+  <meta charset="utf-8" />
+  <link rel="stylesheet" href="../css/bootstrap_flatly.css">
+  <link rel="stylesheet" href="../css/constructor.css">
+  <title>Конструктор форм и сценариев</title>
+  <script type="text/javascript" src="../libs/components.js"></script>
+  <script type="text/javascript" src="../libs/constructor_core.js"></script>
+  <script>
+
+    window.onload = function () {
+      loadComponentsToMenu();
+    }
+
+    function loadComponentsToMenu() {
+      cleanMenuBody();
+      var components = ['TextBox', 'Label', 'CheckBox', 'TextArea', 'RadioButton', 'Button', 'DateBox'];
+      var result = '';
+      components.forEach(element => {
+        result += getComponentForConstructorForInfo(element);
+
+      });
+
+      document.getElementById("screensAndComponents").innerHTML = result;
+      document.getElementById("preloadDiv").innerHTML = getNewScreenButton();
+    }
+
+    function cleanMenuBody() {
+      document.getElementById("screensAndComponents").innerHTML = '';
+    }
+
+    function showMenu(selectedObj, typeOfObj) {
+      let settingsContainer = document.getElementById("settingsBlock");
+      switch (selectedObj) {
+        case 'screen': settingsContainer.innerHTML = showScreenSettings('currentScreenObject'.value); break;
+        case 'component': settingsContainer.innerHTML = showComponent(typeOfObj); break;
+      }
+    }
+
+
+
+
+  </script>
+</head>
+
+<body>
+  <div id="container">
+    <div id="menu" style="margin-left:2%;float:left;width:23%;" class="card-body topBottomGap">
+      <div class="card-title topBottomGap" id="menuTitle"
+        style="margin-top: 4px; margin-bottom: 4px;width:100%;overflow-y:auto;margin:0 auto;">
+        <h5 style="margin-top: 8px; text-align: center;" class="card-title">
+          Экраны и компоненты</h5>
+      </div>
+      <div id="screensAndComponents">
+        <p>Тут меню</p>
+      </div>
+    </div>
+    <div id="prototype" style="float:left;width:50%;" class="dottedBorder topBottomGap">
+      <div style="text-align: center;" id="preloadDiv"></div>
+    </div>
+    <div id="settings" style="margin-right:2%;float:left;width:23%;text-align: center;" class="card-body topBottomGap">
+      <h5 style="margin-top: 8px;" class="card-title">Настройки</h5>
+      <div id="settingsBlock" class="card-body dottedBorder topBottomGap leftGap rightGap" style="text-align: left;">
+
+      </div>
+      <div id="saveButtonContainer"></div>
+    </div>
+  </div>
+
+
+
+</body>
+
+</html>
