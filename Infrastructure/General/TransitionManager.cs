@@ -8,7 +8,7 @@ namespace uniform_player.Infrastructure.General
     public class TransitionManager : ITransitionManager
     {
         private Dictionary<string, TransitionEngine> scenarioTransitions;//содержит словарь по каждому сценарию, внутри которого словарь для каждого экрана с переходами
-
+        public readonly object obj=new object();
         public TransitionManager()
         {
             scenarioTransitions = new Dictionary<string, TransitionEngine>();
@@ -21,13 +21,16 @@ namespace uniform_player.Infrastructure.General
         /// <param name="transitionEngine"></param>
         public void AddTransitions(string scenarioIdentity, TransitionEngine transitionEngine)
         {
-            if (ContainsTransitions(scenarioIdentity))
+            lock (obj)
             {
-                UpdateTransitions(scenarioIdentity, transitionEngine);
-            }
-            else
-            {
-                scenarioTransitions.Add(scenarioIdentity, transitionEngine);
+                if (ContainsTransitions(scenarioIdentity))
+                {
+                    UpdateTransitions(scenarioIdentity, transitionEngine);
+                }
+                else
+                {
+                    scenarioTransitions.Add(scenarioIdentity, transitionEngine);
+                }
             }
         }
 

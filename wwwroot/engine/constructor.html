@@ -49,36 +49,46 @@
 <body>
 
   <div id="container" class="topBottomGap" style="display: flex;flex-wrap: wrap;">
-    <div id="menu" style="margin-left:3%;margin-right:3%;float:left;width:25%;" class="card-body topBottomGap">
-      <div class="card-title topBottomGap" id="menuTitle"
+    <div id="contextMenu leftGap"><label onclick="contextMenuShow()">Menu</label></div>
+    <div id="menu" style="margin-left:3%;margin-right:3%;float:left;width:25%;" class="topBottomGap">
+      <div class="topBottomGap" id="menuTitle"
         style="margin-top: 4px; margin-bottom: 4px;width:70%;overflow-y:auto;margin:0 auto;">
-        <h5 style="margin-top: 8px; text-align: center;" class="card-title">
+        <h5 class="tsz18" style="margin-top: 8px; text-align: center;" >
           Экраны и компоненты</h5>
       </div>
       <div id="screensAndComponents">
         <p>Тут меню</p>
       </div>
+      
     </div>
     <div id="prototype" style="float:left; margin-top: 14px;margin-bottom: 4px; width:30%;margin:0 auto;"
       class="dottedBorder topBottomGap">
       <div style="text-align: right; width:125%;" id="preloadDiv"></div>
+      
     </div>
+    
     <div id="settings" style="margin-right:3%;margin-left:3%;float:left;width:25%;text-align: center;"
-      class="card-body topBottomGap">
-      <h5 style="margin-top: 8px;" class="card-title">Настройки</h5>
-      <div id="settingsBlock" class="card-body dottedBorder topBottomGap leftGap rightGap" style="text-align: left;">
+      class="topBottomGap">
+      <h5 style="margin-top: 8px;" class="tsz18 card-title">Настройки</h5>
+      <div id="settingsBlock" class="dottedBorder topBottomGap leftGap rightGap" style="text-align: left;">
 
       </div>
-      <div id="saveButtonContainer" style="float:left;width:50%"></div>
-      <div id="saveScenarioButtonContainer" style="float:left;width:50%"></div>
+      <div>
+        <div><label for="scenarioId" class="tsz14">Идентификатор сценария:</label> <input type="text" id="scenarioId" class="tsz14" value="" placeholder="Пример: scenario1"></div>
+      <div id="saveButtonContainer" class="btnSettings" style="float:left;"></div>
+      <div id="getScenario" class="btnSettings" style="float:left;"></div>
+      <div id="saveScenarioButtonContainer" class="btnSettings" style="float:right;"></div>
+      <div id="publishScenarioButtonContainer" class="btnSettings" style="float:right;"></div></div>
+      <div id="transitions" class="topBottomGap dottedBorder under" hidden=true style="position:relative; height:275px; overflow-y:scroll;"></div>
     </div>
-  </div>
-  <br>
+   
+  <br> 
   <div id="screenListContainer" class="topBottomGap"
     style="margin-left:3%;margin-right:3%;display: flex;flex-wrap: wrap;overflow-x: auto;overflow-y: hidden;white-space: nowrap;">
   </div>
-
-
+   
+  </div>
+ 
 </body>
 
 </html>

@@ -1,12 +1,18 @@
 ﻿//place of global variables definitions
 let screenList = new Array();
 
+let transition=null;
+
+let rule=null;
+
+let condition=null;
+
 let currentScreenObject = null;
 let currentComponent = null;
-let componentNames = new Array();
 
 let firstScreen = '';
 let firstcScreenChbChecked = false;
+
 
 function makeNewScreen() {
   currentScreenObject = new Object();
@@ -14,9 +20,8 @@ function makeNewScreen() {
   currentScreenObject.type = 'Common';
   currentScreenObject.title = '';
   currentScreenObject.components = new Array();
-  currentScreenObject.pseudoName = '';
   currentScreenObject.description = '';
-
+  currentScreenObject.rules=new Array();
   //screenList.push(currentScreenObject);
   return currentScreenObject;
 }
@@ -30,6 +35,31 @@ function makeNewComponent(componentType) {
   currentComponent.label = '';
   currentComponent.properties = '';
 
+}
+
+
+function makeRule()
+{
+  rule.conditions=new Array();
+  rule.nextScreen='';
+}
+
+function makeCondition()
+{
+  condition.description='';
+  condition.componentName='';
+  condition.predicate='';
+  condition.value='';
+}
+
+function addConditionToRule()
+{
+  rule.conditions.push(condition);
+}
+
+function addRulesToScreen()
+{
+  currentScreenObject.rules.push(rule);
 }
 
 function getScreenData(screenName) {
@@ -97,6 +127,8 @@ function setFirstScreen() {
 }
 
 function showNewScreen(element) {
+  if(document.getElementById("transitions").hidden)
+    document.getElementById("transitions").hidden=false;
   let screenObject = makeNewScreen();
   firstcScreenChbChecked = false;
   let body = '<div id="specificScreen"><div class="card-body dottedBorder topBottomGap" style="text-align: center; ">\
@@ -120,6 +152,9 @@ function showNewScreen(element) {
   refreshScreenSettings();
   showSaveButton();
   showSaveScenario();
+  showPublishButton();
+  showGetDcenarioButton();
+  addTransitionRulesButton();
 }
 
 function showScreen(identity) {
@@ -175,25 +210,31 @@ function showComponent(typeOfObj, identity) {
   if (identity !== null)
     currentComponent = currentScreenObject.components[identity];
   let val = '';
-  if (typeOfObj == 'TextArea') {
+  if (typeOfObj == 'Label') {
     val = '<label class="col-form-label col-form-label-sm " for="cmpValueConstructor">Значение\
     компонента по-умолчанию</label><textarea style="width:96%; margin-left:2%"\
-     value="' + currentComponent.value + '" class="uniform-player-component form-control" placeholder="Например описание какого-либо процесса или требований" rows="5">' + currentComponent.value + '</textarea>';
+     value="' + currentComponent.value + '" class="uniform-player-component tsz14 form-control" placeholder="Например описание какого-либо процесса или требований" rows="5"  onchange="updateCmpValue(this.value,\''+identity+'\')">' + currentComponent.value + '</textarea>';
 
-    '<input class="form-control form-control-sm" placeholder="Например: 2023" type="text"\
-    value="'+ currentComponent.value + '" id="cmpValueConstructor" onchange="updateCmpValue(this.value)"></input>';
   }
   else {
     val = '<label class="col-form-label col-form-label-sm " for="cmpValueConstructor">Значение\
     компонента по-умолчанию</label><input class="form-control form-control-sm" placeholder="Например: 2023" type="text"\
-    value="'+ currentComponent.value + '" id="cmpValueConstructor" onchange="updateCmpValue(this.value)"></input>';
+    value="'+ currentComponent.value + '" id="cmpValueConstructor" onchange="updateCmpValue(this.value,\''+identity+'\')"></input>';
+  }
+
+  let chkradLabel='';
+  if(typeOfObj=='RadioButton' || typeOfObj == 'CheckBox')
+  {
+    chkradLabel='<label class="col-form-label col-form-label-sm " for="cmpLabelConstructor">Подпись\
+    компонента выбора</label><input class="form-control form-control-sm" placeholder="Например: Согласен" type="text"\
+    value="'+ currentComponent.label + '" id="cmpLabelConstructor" onchange="updateCmpLabel(this.value,\''+identity+'\')"></input>';
   }
   return '<div class="form-group topBottomGap leftGap rightGap"><label class="col-form-label col-form-label-sm" for="componentNameConstructor">Идентификатор компонента</label>\
   <input class="form-control form-control-sm" placeholder="Например: text_box_1" type="text" value="'+ currentComponent.name + '" id="componentNameConstructor" onchange="updateCmpName(this.value)">\
   <label class="col-form-label col-form-label-sm " for="cmpDescriptionConstructor">Описание\
         компонента</label><input class="form-control form-control-sm" placeholder="Например: Компонент выбора даты" type="text"\
         value="'+ currentComponent.description + '" id="cmpDescriptionConstructor" onchange="updateCmpDescription(this.value)"></input>'
-    + val +
+    + val + chkradLabel +
     '<label class="col-form-label col-form-label-sm " for="cmpPropConstructor">Дополнительные\
         правила</label><input class="form-control form-control-sm" placeholder="Например текст для размещения в плейсхолдере" type="text"\
         value="'+ currentComponent.properties + '" id="cmpPropConstructor" onchange="updateCmpProperties(this.value)"></input>\
@@ -210,14 +251,30 @@ function updateCmpDescription(descr) {
   currentComponent.description = descr;
 }
 
-function updateCmpValue(val) {
+function updateCmpValue(val, identity) {
   currentComponent.value = val;
+  if(currentComponent.type=='Label')
+    document.getElementById("labelDemo_"+identity).innerHTML=val;
 }
 
 function updateCmpProperties(props) {
   currentComponent.properties = props;
 }
 
+function updateCmpLabel(label,identity)
+{
+  currentComponent.label=label;
+  if(currentComponent.type=='RadioButton' || currentComponent.type=='CheckBox')
+  {
+    let component = new Object();
+    component.type = currentComponent.type;
+    component.name = currentComponent.name;
+    component.label = currentComponent.label;
+    component.value = currentComponent.value;
+    let lbl=currentComponent.type=='RadioButton'?'Радиометка':'Чекбокс';
+    document.getElementById("chbRbDemo_"+identity).innerHTML=wrapComponentForAdding(currentComponent.label, lbl,getCheckBox(component), identity);
+  }
+}
 function addToScreen(componentType) {
   if (currentScreenObject == null)
     return;
@@ -260,6 +317,8 @@ function showExistedComponentsOnExistedScreen(screenId) {
 
 function showPreview() {
 
+
+
 }
 
 
@@ -268,4 +327,47 @@ function saveScenario() {
   var full = { configuration: firstScreenV, screens: screenList, transitions: null };
   var request = JSON.stringify(full);
   console.log(request);
+}
+
+function addNewTransition()
+{
+  let transitionArea = document.getElementById("transitions");
+  transitionArea.innerHTML += '<div class="under dottedBorder">\
+  <div class="under rightGap"><label class="col-form-label col-form-label-sm tsz14 leftGap" for="screenDestination">Экран назначения</label>\
+  <input type="text" class="form-control form-control-sm topBottomGap leftGap tsz14 transitionWidth" id="screenDestination"></div>\
+  <div id="rulesContainer"></div><div class="under rightGap"><button style="height:35px;width:148px;" onclick="addNewRule()" class="tsz14 btn btn-secondary topBottomGap leftGap">Добавить правило</button></div></div>';
+
+}
+
+function addNewRule()
+{
+  document.getElementById("rulesContainer").innerHTML+= '<div class="under rightGap"><label class="col-form-label col-form-label-sm tsz14 leftGap" for="componentSource">Компонент</label><input type="text" class="form-control form-control-sm topBottomGap leftGap tsz14 transitionWidth" id="componentSource">\
+  </div><div class="under rightGap"><label for="predicateSelect" class="col-form-label col-form-label-sm tsz14 leftGap">Условие</label><select id="predicateSelect" class="form-select tsz14 leftGap topBottomGap transitionWidth"><option value="Equal">Равно</option><option value="NotEqual">Неравно</option><option value="MoreThan">Больше чем</option>\
+<option value="LessThan">Меньше чем</option><option value="Clicked">Безусловный переход</option></select></div>\
+<div class="under rightGap"><label for="valueForCompare" class="col-form-label col-form-label-sm tsz14 leftGap">Значение для сравнения</label><input type="text" class="form-control form-control-sm leftGap topBottomGap tsz14 transitionWidth" id="valueForCompare"></div>\
+<div class="under rightGap"><button onclick="makeCondition()" style="height:35px;width:148px;" class=" tsz14 btn btn-secondary topBottomGap leftGap">Сохранить правило</button></div>';
+}
+
+function contextMenuShow()
+{
+  //todo - код отображения
+  return '<div class="modal">\
+    <div class="modal-dialog" role="document">\
+      <div class="modal-content">\
+        <div class="modal-header">\
+          <h5 class="modal-title">Modal title</h5>\
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close">\
+            <span aria-hidden="true"></span>\
+          </button>\
+        </div>\
+        <div class="modal-body">\
+          <p>Modal body text goes here.</p>\
+        </div>\
+        <div class="modal-footer">\
+          <button type="button" class="btn btn-primary">Save changes</button>\
+          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>\
+        </div>\
+      </div>\
+    </div>\
+  </div>';
 }

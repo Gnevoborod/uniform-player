@@ -48,6 +48,18 @@ namespace uniform_player.Infrastructure.Mappers
             return result;
         }
 
+        public static List<Component> FromDtoToModelListScenario(this List<ComponentDto> componentDto)
+        {
+            if (componentDto == null)
+                return default!;
+            List<Component> result = new List<Component>(componentDto.Count);
+            foreach (var dto in componentDto)
+            {
+                result.Add(dto.FromDtoToModel());
+            }
+            return result;
+        }
+
         public static ComponentInteractiveDto FromModelToDto(this Component component)
         {
             if (component == null)

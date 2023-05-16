@@ -8,6 +8,7 @@ namespace uniform_player.Infrastructure.General
     public class ScenarioManager : IScenarioManager
     {
         private Dictionary<string, Scenario> scenarios;
+        private readonly object obj=new object();
 
         public ScenarioManager()
         {
@@ -15,15 +16,16 @@ namespace uniform_player.Infrastructure.General
         }
         public void AddScenario(string identity, Scenario scenario)
         {
-            if (ContainsScenario(identity))
-            {
-                UpdateScenario(identity, scenario);
+            lock (obj) {
+                if (ContainsScenario(identity))
+                {
+                    UpdateScenario(identity, scenario);
+                }
+                else
+                {
+                    scenarios.Add(identity, scenario);
+                }
             }
-            else
-            {
-                scenarios.Add(identity, scenario);
-            }
-
         }
 
         public bool ContainsScenario(string identity)

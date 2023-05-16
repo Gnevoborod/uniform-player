@@ -55,19 +55,34 @@ function getComponentForConstructorForInfo(componentObject) {
 
 function wrapComponentForAdding(componentType, name, component, iterator) {
   //showInfo потому как нам showMenu надо вешать на компонент который добавлен на экран. а этот компонент - просто для отображения
-  return '<div id=' + componentType + '_' + iterator + ' class="dottedBorder topBottomGap leftGap rightGap" ondblclick="deleteFromScreen(' + iterator + ')" onclick="showMenu(\'component\',\'' + componentType + '\',\'' + iterator + '\')"><p class="card-title" style="text-align:center"><b>' + name + '</b></p>' + component + '</div>';
+  let labelTextStart='';
+  let labelTextEnd='';
+  let rbchStart='';
+  let rbchEnd='';
+  switch(componentType){
+    case 'Label':labelTextStart = '<div id="labelDemo_'+iterator+'">';
+                  labelTextEnd='</div>';  
+                  break;
+    case 'RadioButton':rbchStart = '<div id="chbRbDemo_'+iterator+'">';
+    rbchEnd='</div>';  
+                      break;
+    case 'CheckBox':rbchStart = '<div id="chbRbDemo_'+iterator+'">';
+    rbchEnd='</div>';  
+                    break;
+  }
+  return rbchStart+'<div id=' + componentType + '_' + iterator + ' class="tsz14 dottedBorder topBottomGap leftGap rightGap" ondblclick="deleteFromScreen(' + iterator + ')" onclick="showMenu(\'component\',\'' + componentType + '\',\'' + iterator + '\')"><p style="height:2px;text-align:center"><b>' + name + '</b></p>'+labelTextStart + component + labelTextEnd + '</div>'+rbchEnd;
 }
 
 function wrapComponentForInfo(componentType, name, component) {
-  return '<div id=' + componentType + ' style="width:80%;" class="dottedBorder topBottomGap leftGap rightGap" ondblclick="addToScreen(\'' + componentType + '\')" onclick="showInfo(\'component\',\'' + componentType + '\')"><p class="card-title" style="text-align:center"><b>' + name + '</b></p>' + component + '</div>';
+  return '<div id=' + componentType + ' style="width:80%;" class="tsz14 dottedBorder topBottomGap leftGap rightGap" ondblclick="addToScreen(\'' + componentType + '\')" onclick="showInfo(\'component\',\'' + componentType + '\')"><p style="height:2px;text-align:center"><b>' + name + '</b></p>' + component + '</div>';
 }
 function getLabel(label) {
-  return '<p name="' + label.name + '" class="uniform-player-component card-text topBottomGap leftGap">' + label.value + '</p>';
+  return '<p name="' + label.name + '" class="uniform-player-component topBottomGap leftGap">' + label.value + '</p>';
 }
 
 function getButton(btn) {
   hasButton = true;
-  return '<button class="uniform-player-component btn btn-secondary topBottomGap leftGap" name="' + btn.name + '" onclick = getNextScreen(this) value="' + btn.value + '">' + btn.value + '</button>';
+  return '<button class="uniform-player-component tsz14 btn btn-secondary topBottomGap leftGap" name="' + btn.name + '" onclick = getNextScreen(this) value="' + btn.value + '">' + btn.value + '</button>';
 }
 
 function getTextBox(textbox) {
@@ -90,7 +105,7 @@ function switchValue(obj) {
 }
 
 function getTextArea(textarea) {
-  return '<div class="form-group topBottomGap" style="text-align: left;"><label for="' + textarea.name + '" style="margin:0 auto;margin-left:3%" class="form-label topBottomGap leftGap">' + textarea.label + '</label><textarea style="width:96%; margin-left:2%" name="' + textarea.name + '" value="' + textarea.value + '" class="uniform-player-component form-control" id="' + textarea.name + '" rows="3">' + textarea.value + '</textarea></div>';
+  return '<div class="form-group topBottomGap" style="text-align: left;"><label for="' + textarea.name + '" style="margin:0 auto;margin-left:3%" class="form-label topBottomGap leftGap">' + textarea.label + '</label><textarea style="width:96%; margin-left:2%" name="' + textarea.name + '" value="' + textarea.value + '" class="tsz14 uniform-player-component form-control" id="' + textarea.name + '" rows="1">' + textarea.value + '</textarea></div>';
 }
 
 function getRadioButton(radio) {
@@ -115,18 +130,34 @@ function showInfo(component, cmpType) {
 }
 
 function getNewScreenButton() {
-  return '<div style="width:50%; float:left;"><button class="uniform-player-screen btn btn-secondary topBottomGap leftGap" onclick="showNewScreen()">Новый экран</button></div>';
+  return '<div style="width:50%; float:left;"><button class="uniform-player-screen tsz14 btn btn-secondary topBottomGap leftGap" onclick="showNewScreen()">Новый экран</button></div>';
 }
 
 function getPreviewButton() {
-  return '<div style="float:right;"><button class="uniform-player-screen btn btn-secondary topBottomGap rightGap" onclick="showPreview()">Превью</button></div>';
+  return '<div style="float:right;"><button class="uniform-player-screen tsz14 btn btn-secondary topBottomGap rightGap" onclick="showPreview()">Предпросмотр</button></div>';
 }
 
 function showSaveButton() {
-  return document.getElementById("saveButtonContainer").innerHTML = '<button class="uniform-player-screen btn btn-secondary topBottomGap leftGap" onclick="saveScreenToList()">Сохранить экран</button>';
+  return document.getElementById("saveButtonContainer").innerHTML = '<button class="uniform-player-screen tsz14 btn btn-secondary topBottomGap leftGap" onclick="saveScreenToList()">Сохранить экран</button>';
 }
 
 function showSaveScenario() {
-  return document.getElementById("saveScenarioButtonContainer").innerHTML = '<button class="uniform-player-screen btn btn-secondary topBottomGap leftGap" onclick="saveScenario()">Сохранить сценарий</button>';
+  return document.getElementById("saveScenarioButtonContainer").innerHTML = '<button class="uniform-player-screen tsz14 btn btn-secondary topBottomGap leftGap" onclick="saveScenario()">Сохранить сценарий</button>';
+}
+
+function showPublishButton()
+{
+   return document.getElementById("publishScenarioButtonContainer").innerHTML = '<button class="uniform-player-screen tsz14 btn btn-secondary topBottomGap leftGap" onclick="publishScenario()">Опубликовать сценарий</button>';
+}
+
+function showGetDcenarioButton()
+{
+   return document.getElementById("getScenario").innerHTML = '<button class="uniform-player-screen tsz14 btn btn-secondary topBottomGap leftGap" onclick="loadScenario()">Загрузить сценарий</button>';
+}
+
+
+function addTransitionRulesButton()
+{
+   return document.getElementById("transitions").innerHTML = '<button style="height:35px;" class="uniform-player-screen tsz14 btn btn-secondary topBottomGap leftGap" onclick="addNewTransition()">Добавить переход</button>';
 }
 

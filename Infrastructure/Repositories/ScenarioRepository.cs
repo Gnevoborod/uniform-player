@@ -40,9 +40,9 @@ namespace uniform_player.Infrastructure.Repositories
             return _context.ScenarioEntity.ToListAsync();
         }
 
-        public Task<List<ScenarioEntity>> GetAllScenariosAsync(ScenarioState scenarioState)
+        public List<ScenarioEntity> GetAllScenarios(ScenarioState scenarioState)
         {
-            return _context.ScenarioEntity.Where(se=>se.ScenarioState == scenarioState).ToListAsync();
+            return _context.ScenarioEntity.Where(se=>se.ScenarioState == scenarioState).ToList();
         }
     }
 }

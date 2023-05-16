@@ -20,7 +20,7 @@ namespace uniform_player.Infrastructure.Mappers
             foreach (ScreenDto screenDto in dto.Screens)
             {
                 Screen screen = screenDto.FromDtoToModel();
-                if (screenDto.Components != null)
+               /* if (screenDto.Components != null)
                 {
                     foreach (var components in screenDto.Components)
                     {
@@ -30,9 +30,9 @@ namespace uniform_player.Infrastructure.Mappers
                         if (nextToAdd != null)
                             screen.Components.Add(nextToAdd);
                     }
-                }
+                }*/
                 resultScreen.Add(screen);
-                if (screen.PseudoName != null)
+                /*if (screen.PseudoName != null)
                 {
                     int count = screen.PseudoName.Count;
                     for (int i = 0; i < count; i++)
@@ -41,7 +41,7 @@ namespace uniform_player.Infrastructure.Mappers
                         resultScreen.Add(screenNext);
                     }
                 }
-
+                */
             }
             return scenario;
 

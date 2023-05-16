@@ -26,13 +26,14 @@ namespace uniform_player.Infrastructure.Services
             _mover = mover;
             if (!dataLoaded)
             {
-                LoadScenariosFromDbAsync().GetAwaiter().GetResult();
+                LoadScenariosFromDb();
                 dataLoaded = true;
             }
         }
 
-        public async Task<TransitionEngine> LoadNewScenario(string identity, UploadScenarioDto uploadScenarioDto)//после завершения разработки транзишнэнжин - поменять на void
+        public async Task<TransitionEngine> PublishScenarioAsync(string identity, UploadScenarioDto uploadScenarioDto)//после завершения разработки транзишнэнжин - поменять на void
         {
+
             Scenario scenario = new Scenario();
             scenario = uploadScenarioDto.FromDtoToModel();
             TransitionEngine transitionEngine = uploadScenarioDto.Transitions.MakeDictionary();
@@ -40,6 +41,11 @@ namespace uniform_player.Infrastructure.Services
             _scenarioManager.AddScenario(identity, scenario);
             await _scenarioRepository.SaveScenario(uploadScenarioDto.FromDtoToEntity(identity, ScenarioState.Published));
             return transitionEngine;
+        }
+
+        public Task SaveScenarioDraftAsync(string identity, UploadScenarioDto uploadScenarioDto)//после завершения разработки транзишнэнжин - поменять на void
+        {
+            return _scenarioRepository.SaveScenario(uploadScenarioDto.FromDtoToEntity(identity, ScenarioState.Draft));
         }
 
         public InputOutputDto GetNextScreen(InputOutputDto inputOutputDto)
@@ -89,9 +95,9 @@ namespace uniform_player.Infrastructure.Services
         }
 
 
-        public async Task LoadScenariosFromDbAsync()
+        public void LoadScenariosFromDb()
         {
-            var scenarios = await _scenarioRepository.GetAllScenariosAsync(ScenarioState.Published);
+            var scenarios = _scenarioRepository.GetAllScenarios(ScenarioState.Published);
             if (scenarios == null)
                 return;
             foreach(var scenario in scenarios)

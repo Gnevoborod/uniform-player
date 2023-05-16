@@ -49,9 +49,24 @@ namespace uniform_player.Controllers
         [HttpPost("upload/{identity}")]
         public async Task<IActionResult> LoadNewScenario([FromRoute, MaxLength(256)] string identity, [FromBody] UploadScenarioDto uploadScenarioDto)
         {
-            var result = await _scenarioService.LoadNewScenario(identity, uploadScenarioDto);
+            var result = await _scenarioService.PublishScenarioAsync(identity, uploadScenarioDto);
             return Ok(result);
         }
+
+        /// <summary>
+        /// Сохраняет черновик сценария
+        /// </summary>
+        /// <param name="identity"></param>
+        /// <param name="uploadScenarioDto"></param>
+        /// <returns></returns>
+        [ProducesResponseType(typeof(Scenario), 200)]
+        [HttpPost("draft/{identity}")]
+        public async Task<IActionResult> SaveScenarioDraft([FromRoute, MaxLength(256)] string identity, [FromBody] UploadScenarioDto uploadScenarioDto)
+        {
+            await _scenarioService.SaveScenarioDraftAsync(identity, uploadScenarioDto);
+            return Ok();
+        }
+
 
 
         /// <summary>

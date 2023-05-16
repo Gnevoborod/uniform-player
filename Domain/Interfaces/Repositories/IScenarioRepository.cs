@@ -8,6 +8,6 @@ namespace uniform_player.Domain.Interfaces.Repositories
         public Task SaveScenario(ScenarioEntity scenarioEntity);
         public Task<ScenarioEntity?> GetScenario(string identity);
         public Task<List<ScenarioEntity>> GetAllScenariosAsync();
-        public Task<List<ScenarioEntity>> GetAllScenariosAsync(ScenarioState scenarioState);
+        public List<ScenarioEntity> GetAllScenarios(ScenarioState scenarioState);
     }
 }

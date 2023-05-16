@@ -19,8 +19,8 @@ namespace uniform_player.Infrastructure.Mappers
                 Name = dto.Name,
                 Type = screenType,
                 Title = dto.Title,
-                Components = null,//сюда изначально ничего не пишем, так как в методе маппинга добавляем сюда лист компонентов
-                PseudoName = dto.PseudoName,
+                Components = dto.Components.FromDtoToModelListScenario(),//сюда изначально ничего не пишем, так как в методе маппинга добавляем сюда лист компонентов
+                //PseudoName = dto.PseudoName,
                 Description = dto.Description
             };
         }
@@ -35,7 +35,7 @@ namespace uniform_player.Infrastructure.Mappers
                 Type = screen.Type,
                 Title = screen.Title,
                 Components = screen.Components,
-                PseudoName = screen.PseudoName,
+                //PseudoName = screen.PseudoName,
                 Description = screen.Description
             };
         }
