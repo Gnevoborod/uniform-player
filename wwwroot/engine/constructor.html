@@ -29,12 +29,14 @@
     function cleanMenuBody() {
       document.getElementById("screensAndComponents").innerHTML = '';
     }
-
-    function showMenu(selectedObj, typeOfObj) {
+    function cleanSettingsBody() {
+      document.getElementById("settingsBlock").innerHTML = '';
+    }
+    function showMenu(selectedObj, typeOfObj, identity) {
       let settingsContainer = document.getElementById("settingsBlock");
       switch (selectedObj) {
-        case 'screen': settingsContainer.innerHTML = showScreenSettings('currentScreenObject'.value); break;
-        case 'component': settingsContainer.innerHTML = showComponent(typeOfObj); break;
+        case 'screen': settingsContainer.innerHTML = showScreenSettings(); break;
+        case 'component': settingsContainer.innerHTML = showComponent(typeOfObj, identity); break;
       }
     }
 
@@ -45,10 +47,11 @@
 </head>
 
 <body>
-  <div id="container">
-    <div id="menu" style="margin-left:2%;float:left;width:23%;" class="card-body topBottomGap">
+
+  <div id="container" class="topBottomGap" style="display: flex;flex-wrap: wrap;">
+    <div id="menu" style="margin-left:3%;margin-right:3%;float:left;width:25%;" class="card-body topBottomGap">
       <div class="card-title topBottomGap" id="menuTitle"
-        style="margin-top: 4px; margin-bottom: 4px;width:100%;overflow-y:auto;margin:0 auto;">
+        style="margin-top: 4px; margin-bottom: 4px;width:70%;overflow-y:auto;margin:0 auto;">
         <h5 style="margin-top: 8px; text-align: center;" class="card-title">
           Экраны и компоненты</h5>
       </div>
@@ -56,18 +59,24 @@
         <p>Тут меню</p>
       </div>
     </div>
-    <div id="prototype" style="float:left;width:50%;" class="dottedBorder topBottomGap">
-      <div style="text-align: center;" id="preloadDiv"></div>
+    <div id="prototype" style="float:left; margin-top: 14px;margin-bottom: 4px; width:30%;margin:0 auto;"
+      class="dottedBorder topBottomGap">
+      <div style="text-align: right; width:125%;" id="preloadDiv"></div>
     </div>
-    <div id="settings" style="margin-right:2%;float:left;width:23%;text-align: center;" class="card-body topBottomGap">
+    <div id="settings" style="margin-right:3%;margin-left:3%;float:left;width:25%;text-align: center;"
+      class="card-body topBottomGap">
       <h5 style="margin-top: 8px;" class="card-title">Настройки</h5>
       <div id="settingsBlock" class="card-body dottedBorder topBottomGap leftGap rightGap" style="text-align: left;">
 
       </div>
-      <div id="saveButtonContainer"></div>
+      <div id="saveButtonContainer" style="float:left;width:50%"></div>
+      <div id="saveScenarioButtonContainer" style="float:left;width:50%"></div>
     </div>
   </div>
-
+  <br>
+  <div id="screenListContainer" class="topBottomGap"
+    style="margin-left:3%;margin-right:3%;display: flex;flex-wrap: wrap;overflow-x: auto;overflow-y: hidden;white-space: nowrap;">
+  </div>
 
 
 </body>

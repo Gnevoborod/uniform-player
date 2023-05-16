@@ -18,20 +18,20 @@ function getComponent(componentObject) {
   }
 }
 
-function getComponentForConstructor(componentObject) {
+function getComponentForConstructor(componentObject, iterator) {
   let component = new Object();
   component.type = componentObject;
   component.name = 'Name';
   component.label = 'Label';
   component.value = 'Value';
   switch (componentObject) {
-    case 'Label': return wrapComponentForAdding(componentObject, 'Метка', getLabel(component));
-    case 'Button': return wrapComponentForAdding(componentObject, 'Кнопка', getButton(component));
-    case 'TextBox': return wrapComponentForAdding(componentObject, 'Текстовое поле ввода', getTextBox(component));
-    case 'CheckBox': return wrapComponentForAdding(componentObject, 'Чекбокс', getCheckBox(component));
-    case 'TextArea': return wrapComponentForAdding(componentObject, 'Многострочное поле ввода', getTextArea(component));
-    case 'RadioButton': return wrapComponentForAdding(componentObject, 'Радиометка', getRadioButton(component));
-    case 'DateBox': return wrapComponentForAdding(componentObject, 'Дата', getDateBox(component));
+    case 'Label': return wrapComponentForAdding(componentObject, 'Метка', getLabel(component), iterator);
+    case 'Button': return wrapComponentForAdding(componentObject, 'Кнопка', getButton(component), iterator);
+    case 'TextBox': return wrapComponentForAdding(componentObject, 'Текстовое поле ввода', getTextBox(component), iterator);
+    case 'CheckBox': return wrapComponentForAdding(componentObject, 'Чекбокс', getCheckBox(component), iterator);
+    case 'TextArea': return wrapComponentForAdding(componentObject, 'Многострочное поле ввода', getTextArea(component), iterator);
+    case 'RadioButton': return wrapComponentForAdding(componentObject, 'Радиометка', getRadioButton(component), iterator);
+    case 'DateBox': return wrapComponentForAdding(componentObject, 'Дата', getDateBox(component), iterator);
   }
 }
 
@@ -53,14 +53,13 @@ function getComponentForConstructorForInfo(componentObject) {
 }
 
 
-function wrapComponentForAdding(componentType, name, component) {
+function wrapComponentForAdding(componentType, name, component, iterator) {
   //showInfo потому как нам showMenu надо вешать на компонент который добавлен на экран. а этот компонент - просто для отображения
-  return '<div id='+componentType+' class="dottedBorder topBottomGap leftGap rightGap"  onclick="showMenu(\'component\',\'' + componentType + '\')"><p class="card-title" style="text-align:center">' + name + '</p>' + component + '</div>';
+  return '<div id=' + componentType + '_' + iterator + ' class="dottedBorder topBottomGap leftGap rightGap" ondblclick="deleteFromScreen(' + iterator + ')" onclick="showMenu(\'component\',\'' + componentType + '\',\'' + iterator + '\')"><p class="card-title" style="text-align:center"><b>' + name + '</b></p>' + component + '</div>';
 }
 
-function wrapComponentForInfo(componentType, name, component)
-{
-  return '<div id='+componentType+' class="dottedBorder topBottomGap leftGap rightGap" ondblclick="addToScreen(\''+componentType+'\')" onclick="showInfo(\'component\',\'' + componentType + '\')"><p class="card-title" style="text-align:center">' + name + '</p>' + component + '</div>';
+function wrapComponentForInfo(componentType, name, component) {
+  return '<div id=' + componentType + ' style="width:80%;" class="dottedBorder topBottomGap leftGap rightGap" ondblclick="addToScreen(\'' + componentType + '\')" onclick="showInfo(\'component\',\'' + componentType + '\')"><p class="card-title" style="text-align:center"><b>' + name + '</b></p>' + component + '</div>';
 }
 function getLabel(label) {
   return '<p name="' + label.name + '" class="uniform-player-component card-text topBottomGap leftGap">' + label.value + '</p>';
@@ -72,7 +71,9 @@ function getButton(btn) {
 }
 
 function getTextBox(textbox) {
-  return '<div class="form-group topBottomGap" style="text-align: left;"><label style="margin:0 auto;margin-left:3%" class="col-form-label mt-4 topBottomGap leftGap" for="' + textbox.name + '">' + textbox.label + '</label><input type="text" style="width:96%; margin-left:2%" class="uniform-player-component form-control" placeholder="' + textbox.properties + '" id="' + textbox.name + '" name="' + textbox.name + '" value="' + textbox.value + '"></div>';
+  var placeholder = textbox.properties === undefined ? '' : textbox.properties;
+
+  return '<div class="form-group topBottomGap" style="text-align: left;"><label style="margin:0 auto;margin-left:3%" class="col-form-label leftGap" for="' + textbox.name + '">' + textbox.label + '</label><input type="text" style="width:48%; margin-left:2%" class="uniform-player-component form-control form-control-sm" placeholder="' + placeholder + '" id="' + textbox.name + '" name="' + textbox.name + '" value="' + textbox.value + '"></div>';
 }
 
 function getCheckBox(checkbox) {
@@ -89,7 +90,7 @@ function switchValue(obj) {
 }
 
 function getTextArea(textarea) {
-  return '<div class="form-group topBottomGap" style="text-align: left;"><label for="' + textarea.name + '" style="margin:0 auto;margin-left:3%" class="form-label mt-4 topBottomGap leftGap">' + textarea.label + '</label><textarea style="width:96%; margin-left:2%" name="' + textarea.name + '" value="' + textarea.value + '" class="uniform-player-component form-control" id="' + textarea.name + '" rows="3">' + textarea.value + '</textarea></div>';
+  return '<div class="form-group topBottomGap" style="text-align: left;"><label for="' + textarea.name + '" style="margin:0 auto;margin-left:3%" class="form-label topBottomGap leftGap">' + textarea.label + '</label><textarea style="width:96%; margin-left:2%" name="' + textarea.name + '" value="' + textarea.value + '" class="uniform-player-component form-control" id="' + textarea.name + '" rows="3">' + textarea.value + '</textarea></div>';
 }
 
 function getRadioButton(radio) {
@@ -98,30 +99,34 @@ function getRadioButton(radio) {
 }
 
 function getDateBox(date) {
-  return '<div class="form-group topBottomGap" style="text-align: left;"><label style="margin:0 auto;margin-left:3%" class="col-form-label mt-4 topBottomGap leftGap" for="' + date.name + '">' + date.label + '</label><input type="date" class="uniform-player-component  form-control" style="width:48%; margin:0 auto; margin-left:2%;" id="' + date.name + '" name="' + date.name + '" value="' + date.value + '"></div>';
+  return '<div class="form-group topBottomGap" style="text-align: left;"><label style="margin:0 auto;margin-left:3%" class="col-form-label topBottomGap leftGap" for="' + date.name + '">' + date.label + '</label><input type="date" class="uniform-player-component form-control-sm form-control" style="width:48%; margin:0 auto; margin-left:2%;" id="' + date.name + '" name="' + date.name + '" value="' + date.value + '"></div>';
 }
 
-function showInfo(component, cmpType)
-{
- switch(cmpType)
- {
-  case 'Label': return 'Многострочное поле для отображения текста, поддерживающее разметку.';
-  case 'Button': return 'Кнопка для переходов между страницами.';
-  case 'TextBox': return 'Однострочное поле ввода (имя, адрес, почта).';
-  case 'CheckBox': return 'Чекбокс.';
-  case 'TextArea': return 'Многострочное поле ввода.';
-  case 'RadioButton': return 'Радиокнопка, для формирования радиогрупп.';
-  case 'DateBox': return 'Поле ввода даты.';
- }
+function showInfo(component, cmpType) {
+  switch (cmpType) {
+    case 'Label': return 'Многострочное поле для отображения текста, поддерживающее разметку.';
+    case 'Button': return 'Кнопка для переходов между страницами.';
+    case 'TextBox': return 'Однострочное поле ввода (имя, адрес, почта).';
+    case 'CheckBox': return 'Чекбокс.';
+    case 'TextArea': return 'Многострочное поле ввода.';
+    case 'RadioButton': return 'Радиокнопка, для формирования радиогрупп.';
+    case 'DateBox': return 'Поле ввода даты.';
+  }
 }
 
-function getNewScreenButton()
-{
-  return '<button class="uniform-player-screen btn btn-secondary topBottomGap leftGap" onclick="showNewScreen()">Новый экран</button>';
+function getNewScreenButton() {
+  return '<div style="width:50%; float:left;"><button class="uniform-player-screen btn btn-secondary topBottomGap leftGap" onclick="showNewScreen()">Новый экран</button></div>';
 }
 
-function showSaveButton()
-{
-  return document.getElementById("saveButtonContainer").innerHTML='<button class="uniform-player-screen btn btn-secondary topBottomGap leftGap" onclick="saveScreenToList()">Сохранить экран</button>';
+function getPreviewButton() {
+  return '<div style="float:right;"><button class="uniform-player-screen btn btn-secondary topBottomGap rightGap" onclick="showPreview()">Превью</button></div>';
+}
+
+function showSaveButton() {
+  return document.getElementById("saveButtonContainer").innerHTML = '<button class="uniform-player-screen btn btn-secondary topBottomGap leftGap" onclick="saveScreenToList()">Сохранить экран</button>';
+}
+
+function showSaveScenario() {
+  return document.getElementById("saveScenarioButtonContainer").innerHTML = '<button class="uniform-player-screen btn btn-secondary topBottomGap leftGap" onclick="saveScenario()">Сохранить сценарий</button>';
 }
 
