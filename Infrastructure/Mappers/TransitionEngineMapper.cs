@@ -7,12 +7,12 @@ namespace uniform_player.Infrastructure.Mappers
     {
         public static Transition FromDtoToModel(this TransitionDto transitionDto)
         {
-            if (transitionDto == null)
-                return default!;
+            if(transitionDto == null)
+                    return default!;
             Transition transition = new Transition();
-            transition.ScreenSource = transitionDto.ScreenSource;
-            transition.Rules = new List<Rule>(transitionDto.Rules.Count);
-            foreach(var rule in transitionDto.Rules) 
+            transition.NextScreen = transitionDto.NextScreen;
+            transition.Rules = new List<Rule>();
+            foreach(var rule in transitionDto.Rules)
             {
                 var newRule = rule.FromDtoToModel();
                 transition.Rules.Add(newRule);
@@ -20,17 +20,34 @@ namespace uniform_player.Infrastructure.Mappers
             return transition;
         }
 
-        public static TransitionEngine MakeDictionary(this List<TransitionDto> Transitions)
+        public static List<Transition> FromDtoToModelList(this List<TransitionDto> transitionsDto)
         {
-            TransitionEngine transitionEngine = new TransitionEngine();
-            transitionEngine.Transitions = new Dictionary<string, List<Rule>>();
-            foreach (var transition in Transitions)
+            if (transitionsDto == null)
+                return default!;
+            List<Transition> result = new List<Transition>();
+            foreach (var transition in transitionsDto)
             {
-                string screenName = transition.ScreenSource;
-                List<Rule> rules = transition.Rules.FromDtoToModelList();
-                transitionEngine.Transitions.Add(screenName,rules);
+                var newTransition = transition.FromDtoToModel();
+                result.Add(newTransition);
             }
-            return transitionEngine;
+            return result;
         }
+
+        public static int MakeDictionary(this TransitionEngine transitionEngine, UploadScenarioDto uploadDto)
+        {
+            if (transitionEngine == null)
+                return default!;
+            if(transitionEngine.Transitions == null)
+                transitionEngine.Transitions = new();
+            if (uploadDto == null)
+                return default!;
+            foreach(var screen in uploadDto.Screens)
+            {
+                var newTransitions = screen.Transitions.FromDtoToModelList();
+                transitionEngine.Transitions.Add(screen.Name, newTransitions);
+            }
+            return transitionEngine.Transitions.Count();
+        }
+
     }
 }

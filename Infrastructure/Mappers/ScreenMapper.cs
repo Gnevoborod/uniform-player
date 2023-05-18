@@ -22,6 +22,7 @@ namespace uniform_player.Infrastructure.Mappers
                 Components = dto.Components.FromDtoToModelListScenario(),//сюда изначально ничего не пишем, так как в методе маппинга добавляем сюда лист компонентов
                 //PseudoName = dto.PseudoName,
                 Description = dto.Description
+
             };
         }
 

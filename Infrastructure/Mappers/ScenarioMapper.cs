@@ -20,28 +20,7 @@ namespace uniform_player.Infrastructure.Mappers
             foreach (ScreenDto screenDto in dto.Screens)
             {
                 Screen screen = screenDto.FromDtoToModel();
-               /* if (screenDto.Components != null)
-                {
-                    foreach (var components in screenDto.Components)
-                    {
-                        if (screen.Components == null)
-                            screen.Components = new List<Component>(screenDto.Components.Count);
-                        var nextToAdd = dto.Components?.FirstOrDefault(cd => cd.Name == components)?.FromDtoToModel();
-                        if (nextToAdd != null)
-                            screen.Components.Add(nextToAdd);
-                    }
-                }*/
                 resultScreen.Add(screen);
-                /*if (screen.PseudoName != null)
-                {
-                    int count = screen.PseudoName.Count;
-                    for (int i = 0; i < count; i++)
-                    {
-                        var screenNext = screen.MakePseudoNamedScreen(screen.PseudoName[i]);
-                        resultScreen.Add(screenNext);
-                    }
-                }
-                */
             }
             return scenario;
 

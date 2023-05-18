@@ -9,18 +9,9 @@ namespace uniform_player.Infrastructure.Mappers
         public static List<Rule> FromDtoToModelList(this List<RuleDto> dtos)
         {
             List<Rule> result = new List<Rule>();
-            foreach (RuleDto dto in dtos)
+            foreach(RuleDto dto in dtos)
             {
                 var rule = dto.FromDtoToModel();
-                if (dto.Conditions != null)
-                {
-                    if (dto.Conditions.Count > 0)
-                        rule.Conditions = new List<Condition>();
-                    foreach (var condition in dto.Conditions)
-                    {
-                        rule.Conditions?.Add(condition.FromDtoToModel());
-                    }
-                }
                 result.Add(rule);
             }
             return result;
@@ -28,12 +19,12 @@ namespace uniform_player.Infrastructure.Mappers
 
         public static Rule FromDtoToModel(this RuleDto dto)
         {
-            if (dto == null)
-                return default!;
             return new Rule
             {
-                Conditions = null,//тут должна быть норм логика
-                NextScreen = dto.NextScreen
+                Description = dto.Description,
+                ComponentName = dto.ComponentName,
+                Predicate = (Predicate)Enum.Parse(typeof(Predicate), dto.Predicate, true),
+                Value = dto.Value
             };
         }
     }

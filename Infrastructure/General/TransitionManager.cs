@@ -49,7 +49,7 @@ namespace uniform_player.Infrastructure.General
             return scenarioTransitions[scenarioIdentity];
         }
 
-        public List<Rule> GetTransitionRulesForScreen(string scenarioIdentity, string screenName)
+        public List<Transition> GetTransitionRulesForScreen(string scenarioIdentity, string screenName)
         {
             var transitionEngine = GetTransitions(scenarioIdentity);
             return transitionEngine.Transitions[screenName];

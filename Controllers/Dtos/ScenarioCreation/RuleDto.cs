@@ -5,7 +5,10 @@ namespace uniform_player.Controllers.Dtos.ScenarioCreation
 {
     public class RuleDto
     {
-        public List<ConditionDto>? Conditions { get; set; }
-        public string? NextScreen { get; set; }
+        public string? Description { get; set; }
+        public string ComponentName { get; set; }
+        [EnumSet(typeof(Predicate))]
+        public string Predicate { get; set; }
+        public string? Value { get; set; }
     }
 }

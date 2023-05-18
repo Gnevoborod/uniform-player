@@ -6,12 +6,12 @@ namespace uniform_player.Controllers.Dtos.ScenarioCreation
 {
     public class ScreenDto
     {
-        public string Name { get; set; }
+        public string Name { get; set; } = default!;
         [EnumSet(typeof(ScreenType))]
-        public string Type { get; set; }
+        public string Type { get; set; } = default!;
         public string? Title { get; set; }
-        //public List<string>? PseudoName { get; set; }
         public string? Description { get; set; }
         public List<ComponentDto> Components { get; set; } = default!;
+        public List<TransitionDto>? Transitions { get; set; } = default!;
     }
 }

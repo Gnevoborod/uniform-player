@@ -3,16 +3,15 @@ let screenList = new Array();
 
 let transition=null;
 
-let rule=null;
 
-let condition=null;
+let rules=null;
 
 let currentScreenObject = null;
 let currentComponent = null;
 
 let firstScreen = '';
 let firstcScreenChbChecked = false;
-
+let rnd=0;
 
 function makeNewScreen() {
   currentScreenObject = new Object();
@@ -21,7 +20,7 @@ function makeNewScreen() {
   currentScreenObject.title = '';
   currentScreenObject.components = new Array();
   currentScreenObject.description = '';
-  currentScreenObject.rules=new Array();
+  currentScreenObject.transitions=new Array();
   //screenList.push(currentScreenObject);
   return currentScreenObject;
 }
@@ -38,28 +37,28 @@ function makeNewComponent(componentType) {
 }
 
 
+function makeTransition()
+{
+  transition.rules=new Array();
+  transition.nextScreen='';
+}
+
 function makeRule()
 {
-  rule.conditions=new Array();
-  rule.nextScreen='';
+  rule.description='';
+  rule.componentName='';
+  rule.predicate='';
+  rule.value='';
 }
 
-function makeCondition()
+function addNewRule()
 {
-  condition.description='';
-  condition.componentName='';
-  condition.predicate='';
-  condition.value='';
-}
-
-function addConditionToRule()
-{
-  rule.conditions.push(condition);
+  transition.rules.push(rule);
 }
 
 function addRulesToScreen()
 {
-  currentScreenObject.rules.push(rule);
+  currentScreenObject.transitions.push(transition);
 }
 
 function getScreenData(screenName) {
@@ -332,20 +331,24 @@ function saveScenario() {
 function addNewTransition()
 {
   let transitionArea = document.getElementById("transitions");
-  transitionArea.innerHTML += '<div class="under dottedBorder">\
-  <div class="under rightGap"><label class="col-form-label col-form-label-sm tsz14 leftGap" for="screenDestination">Экран назначения</label>\
-  <input type="text" class="form-control form-control-sm topBottomGap leftGap tsz14 transitionWidth" id="screenDestination"></div>\
-  <div id="rulesContainer"></div><div class="under rightGap"><button style="height:35px;width:148px;" onclick="addNewRule()" class="tsz14 btn btn-secondary topBottomGap leftGap">Добавить правило</button></div></div>';
+  let local=rnd;
+  rnd++;
+  
+  transitionArea.innerHTML += '<div class="under dottedBorder" style="position:relative;width:100%">\
+  <div class="under rightGap dottedBorder" ><div><label class="col-form-label col-form-label-sm tsz14 leftGap" for="screenDestination">Экран назначения</label>\
+  <input type="text" class="form-control form-control-sm topBottomGap leftGap tsz14 transitionWidthS transitionHeight" id="screenDestination"></div>\
+  <div id="rulesContainer'+local+'" class="under dottedBorder" ></div>\
+  <div class="under rightGap"><button style="height:35px;width:148px;" onclick="addNewRule(this.value)" value="'+local+'" class="tsz14 btn btn-secondary topBottomGap leftGap">Добавить правило</button></div></div></div>';
 
 }
 
-function addNewRule()
+function addNewRule(local)
 {
-  document.getElementById("rulesContainer").innerHTML+= '<div class="under rightGap"><label class="col-form-label col-form-label-sm tsz14 leftGap" for="componentSource">Компонент</label><input type="text" class="form-control form-control-sm topBottomGap leftGap tsz14 transitionWidth" id="componentSource">\
-  </div><div class="under rightGap"><label for="predicateSelect" class="col-form-label col-form-label-sm tsz14 leftGap">Условие</label><select id="predicateSelect" class="form-select tsz14 leftGap topBottomGap transitionWidth"><option value="Equal">Равно</option><option value="NotEqual">Неравно</option><option value="MoreThan">Больше чем</option>\
+  document.getElementById("rulesContainer"+local).innerHTML+= '<div class="under dottedBorder" style="text-align:left;margin: 0"><details style="text-align:left;"><summary>Правило</summary><div class="under rightGap"><label class="col-form-label col-form-label-sm tsz14 leftGap" for="componentSource">Компонент</label><input type="text" class="form-control form-control-sm topBottomGap leftGap tsz14 transitionWidthS" id="componentSource">\
+  </div><div class="under rightGap"><label for="predicateSelect" class="col-form-label col-form-label-sm tsz14 leftGap">Условие</label><select id="predicateSelect" class="form-select tsz14 leftGap topBottomGap transitionWidthM"><option value="Equal">Равно</option><option value="NotEqual">Неравно</option><option value="MoreThan">Больше чем</option>\
 <option value="LessThan">Меньше чем</option><option value="Clicked">Безусловный переход</option></select></div>\
-<div class="under rightGap"><label for="valueForCompare" class="col-form-label col-form-label-sm tsz14 leftGap">Значение для сравнения</label><input type="text" class="form-control form-control-sm leftGap topBottomGap tsz14 transitionWidth" id="valueForCompare"></div>\
-<div class="under rightGap"><button onclick="makeCondition()" style="height:35px;width:148px;" class=" tsz14 btn btn-secondary topBottomGap leftGap">Сохранить правило</button></div>';
+<div class="under rightGap"><label for="valueForCompare" class="col-form-label col-form-label-sm tsz14 leftGap">Значение для сравнения</label><input type="text" class="form-control form-control-sm leftGap topBottomGap tsz14 transitionWidthS" id="valueForCompare"></div>\
+<div class="under rightGap"><button onclick="makeCondition()" style="height:35px;width:148px;" class=" tsz14 btn btn-secondary topBottomGap leftGap">Сохранить правило</button></div></details></div>';
 }
 
 function contextMenuShow()

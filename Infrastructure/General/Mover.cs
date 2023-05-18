@@ -1,4 +1,5 @@
-﻿using uniform_player.Domain.Interfaces.General;
+﻿using System.Data;
+using uniform_player.Domain.Interfaces.General;
 using uniform_player.Domain.Models;
 using uniform_player.Infrastructure.Exceptions;
 
@@ -18,21 +19,21 @@ namespace uniform_player.Infrastructure.General
                     .FirstScreen);
         }
 
-        public Screen? GetNextScreen(CurrentValues currentValues, List<Rule> rules, Scenario scenario)
+
+        public Screen? GetNextScreen(CurrentValues currentValues, List<Transition> transitions, Scenario scenario)
         {
-            if (rules==null)
+            if (transitions == null)
                 throw new ApiException(ExceptionEvents.RulesNotExists);
-            if(scenario == null)
+            if (scenario == null)
                 throw new ApiException(ExceptionEvents.ScenarioNotPresented);
             bool satisfied = false;
-            foreach(var rule in rules)
+            foreach (var transition in transitions)
             {
-                if(rule.Conditions == null) continue;
                 foreach (var value in currentValues.ComponentsValues)
                 {
-                    if (rule.Conditions.FirstOrDefault(r=>r.ComponentName == value.ComponentName) == null)
+                    if (transition.Rules == null || transition.Rules.FirstOrDefault(r => r.ComponentName == value.ComponentName) == null)
                         continue;
-                    foreach (var condition in rule.Conditions)
+                    foreach (var condition in transition.Rules)
                     {
                         satisfied = ConditionChecker.TestValue(condition.Predicate, value.Value!, condition.Value!);
                         if (satisfied)
@@ -42,10 +43,11 @@ namespace uniform_player.Infrastructure.General
                         break;
                 }
                 if (satisfied)
-                    return scenario.Screens.FirstOrDefault(s => s.Name == rule.NextScreen);
+                    return scenario.Screens.FirstOrDefault(s => s.Name == transition.NextScreen);
             }
             throw new ApiException(ExceptionEvents.TransitionNotExists);
         }
+
 
     }
 }

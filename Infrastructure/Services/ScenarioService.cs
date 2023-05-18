@@ -36,7 +36,8 @@ namespace uniform_player.Infrastructure.Services
 
             Scenario scenario = new Scenario();
             scenario = uploadScenarioDto.FromDtoToModel();
-            TransitionEngine transitionEngine = uploadScenarioDto.Transitions.MakeDictionary();
+            TransitionEngine transitionEngine = new TransitionEngine();
+            transitionEngine.MakeDictionary(uploadScenarioDto);
             _transitionManager.AddTransitions(identity, transitionEngine);
             _scenarioManager.AddScenario(identity, scenario);
             await _scenarioRepository.SaveScenario(uploadScenarioDto.FromDtoToEntity(identity, ScenarioState.Published));
@@ -50,9 +51,9 @@ namespace uniform_player.Infrastructure.Services
 
         public InputOutputDto GetNextScreen(InputOutputDto inputOutputDto)
         {
-            var rules = _transitionManager.GetTransitionRulesForScreen(inputOutputDto.Scenario, inputOutputDto.CurrentValues.Screen);
+            var transitions = _transitionManager.GetTransitionRulesForScreen(inputOutputDto.Scenario, inputOutputDto.CurrentValues.Screen);
             var scenario = _scenarioManager.GetScenario(inputOutputDto.Scenario);
-            inputOutputDto.Screen = _mover.GetNextScreen(inputOutputDto.FromDtoToModel().CurrentValues, rules, scenario).FromModelToDto();
+            inputOutputDto.Screen = _mover.GetNextScreen(inputOutputDto.FromDtoToModel().CurrentValues, transitions, scenario)!.FromModelToDto();
             if(inputOutputDto.PreviousScreens == null)
             {
                 inputOutputDto.PreviousScreens = new List<PreviousScreenDto>();
@@ -106,7 +107,8 @@ namespace uniform_player.Infrastructure.Services
                 var scenarioModel = scenarioDto?.FromDtoToModel();
                 if (scenarioDto == null || scenarioModel == null)
                     continue;
-                TransitionEngine transitionEngine = scenarioDto.Transitions.MakeDictionary();
+                TransitionEngine transitionEngine = new TransitionEngine();
+                transitionEngine.MakeDictionary(scenarioDto);
                 _transitionManager.AddTransitions(scenario.Name, transitionEngine);
                 _scenarioManager.AddScenario(scenario.Name, scenarioModel);
             }

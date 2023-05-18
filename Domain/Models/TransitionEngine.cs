@@ -7,6 +7,6 @@ namespace uniform_player.Domain.Models
     /// </summary>
     public class TransitionEngine
     {
-        public Dictionary<string, List<Rule>> Transitions { get; set; } = default!;
+        public Dictionary<string, List<Transition>> Transitions { get; set; } = default!;
     }
 }

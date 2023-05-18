@@ -42,10 +42,19 @@
   width:50%
 }
 
-.transitionWidth{
+.transitionWidthS{
+  width:25%;
+}
+.transitionWidthM{
+  width:50%;
+}
+.transitionWidthH{
   width:75%;
 }
 
+.transitionHeight{
+  height: 31px;
+}
 .under{
   display: flex;
   flex-wrap: wrap;

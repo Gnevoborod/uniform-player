@@ -1,9 +1,10 @@
-﻿
-namespace uniform_player.Domain.Models
+﻿namespace uniform_player.Domain.Models
 {
     public class Rule
     {
-        public List<Condition>? Conditions { get; set; }
-        public string? NextScreen { get; set; }
+        public string? Description { get; set; }
+        public string ComponentName { get; set; } = default!;
+        public Predicate Predicate { get; set; }
+        public string? Value { get; set; }
     }
 }
