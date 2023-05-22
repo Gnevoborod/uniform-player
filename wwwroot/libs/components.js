@@ -130,34 +130,34 @@ function showInfo(component, cmpType) {
 }
 
 function getNewScreenButton() {
-  return '<div style="width:50%; float:left;"><button class="uniform-player-screen tsz14 btn btn-secondary topBottomGap leftGap" onclick="showNewScreen()">Новый экран</button></div>';
+  return '<div style="width:50%; float:left;"><button class="uniform-player-screen tsz14 btn btn-info topBottomGap leftGap" onclick="showNewScreen()">Новый экран</button></div>';
 }
 
 function getPreviewButton() {
-  return '<div style="float:right;"><button class="uniform-player-screen tsz14 btn btn-secondary topBottomGap rightGap" onclick="showPreview()">Предпросмотр</button></div>';
+  return '<div style="float:right;"><button class="uniform-player-screen tsz14 btn btn-warning topBottomGap rightGap" onclick="showPreview()">Предпросмотр</button></div>';
 }
 
 function showSaveButton() {
-  return document.getElementById("saveButtonContainer").innerHTML = '<button class="uniform-player-screen tsz14 btn btn-secondary topBottomGap leftGap" onclick="saveScreenToList()">Сохранить экран</button>';
+  return document.getElementById("saveButtonContainer").innerHTML = '<button class="uniform-player-screen tsz14 btn btn-success topBottomGap leftGap" onclick="saveScreenToList()">Сохранить экран</button>';
 }
 
 function showSaveScenario() {
-  return document.getElementById("saveScenarioButtonContainer").innerHTML = '<button class="uniform-player-screen tsz14 btn btn-secondary topBottomGap leftGap" onclick="saveScenario()">Сохранить сценарий</button>';
+  return document.getElementById("saveScenarioButtonContainer").innerHTML = '<button class="uniform-player-screen tsz14 btn btn-success topBottomGap leftGap" onclick="saveScenario()">Сохранить сценарий</button>';
 }
 
 function showPublishButton()
 {
-   return document.getElementById("publishScenarioButtonContainer").innerHTML = '<button class="uniform-player-screen tsz14 btn btn-secondary topBottomGap leftGap" onclick="publishScenario()">Опубликовать сценарий</button>';
+   return document.getElementById("publishScenarioButtonContainer").innerHTML = '<button class="uniform-player-screen tsz14 btn btn-success topBottomGap leftGap" onclick="publishScenario()">Опубликовать сценарий</button>';
 }
 
 function showGetDcenarioButton()
 {
-   return document.getElementById("getScenario").innerHTML = '<button class="uniform-player-screen tsz14 btn btn-secondary topBottomGap leftGap" onclick="loadScenario()">Загрузить сценарий</button>';
+   return document.getElementById("getScenario").innerHTML = '<button class="uniform-player-screen tsz14 btn btn-info topBottomGap leftGap" onclick="loadScenario()">Загрузить сценарий</button>';
 }
 
 
 function addTransitionRulesButton()
 {
-   return document.getElementById("transitions").innerHTML = '<button style="height:35px;" class="uniform-player-screen tsz14 btn btn-secondary topBottomGap leftGap" onclick="addNewTransition()">Добавить переход</button>';
+   return document.getElementById("transitions").innerHTML = '<button style="height:35px;" class="uniform-player-screen tsz14 btn btn-info topBottomGap leftGap" onclick="addNewTransition()">Добавить переход</button>';
 }
 

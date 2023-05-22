@@ -8,10 +8,14 @@ let rules=null;
 
 let currentScreenObject = null;
 let currentComponent = null;
+let currentRule=null;
 
 let firstScreen = '';
 let firstcScreenChbChecked = false;
 let rnd=0;
+
+
+let rulesPseudo = new Array();
 
 function makeNewScreen() {
   currentScreenObject = new Object();
@@ -37,26 +41,29 @@ function makeNewComponent(componentType) {
 }
 
 
-function makeTransition()
+function makeTransition(screen)
 {
+  transition = new Object();
   transition.rules=new Array();
-  transition.nextScreen='';
+  transition.nextScreen=screen;
 }
 
 function makeRule()
 {
+  rule = new Object();
   rule.description='';
   rule.componentName='';
   rule.predicate='';
   rule.value='';
+  return rule;
 }
 
-function addNewRule()
+function addNewRuleToTransition()
 {
   transition.rules.push(rule);
 }
 
-function addRulesToScreen()
+function addTransitionToScreen()
 {
   currentScreenObject.transitions.push(transition);
 }
@@ -322,55 +329,133 @@ function showPreview() {
 
 
 function saveScenario() {
+
+  xmlhttp.onreadystatechange = function () {
+    if (xmlhttp.readyState == 4 && xmlhttp.status == 200) {
+      alert('ok');
+    }
+    else {
+      document.body.append = "No answer";
+
+    }
+  };
   var firstScreenV = { firstScreen: firstScreen };
-  var full = { configuration: firstScreenV, screens: screenList, transitions: null };
+  var full = { configuration: firstScreenV, screens: screenList };
   var request = JSON.stringify(full);
   console.log(request);
+  var scenarioId = document.getElementById("scenarioId").value;
+  if(scenarioId.length<1)
+  {
+    document.getElementById("scenarioId").style="color:red;";
+    return ;
+  }
+  xmlhttp.open('POST', '../scenarios/upload/'+scenarioId, true);
+      xmlhttp.setRequestHeader("Content-type", "application/json");
+      xmlhttp.send(request);
 }
 
 function addNewTransition()
 {
+  
   let transitionArea = document.getElementById("transitions");
   let local=rnd;
   rnd++;
-  
+
   transitionArea.innerHTML += '<div class="under dottedBorder" style="position:relative;width:100%">\
-  <div class="under rightGap dottedBorder" ><div><label class="col-form-label col-form-label-sm tsz14 leftGap" for="screenDestination">Экран назначения</label>\
-  <input type="text" class="form-control form-control-sm topBottomGap leftGap tsz14 transitionWidthS transitionHeight" id="screenDestination"></div>\
-  <div id="rulesContainer'+local+'" class="under dottedBorder" ></div>\
-  <div class="under rightGap"><button style="height:35px;width:148px;" onclick="addNewRule(this.value)" value="'+local+'" class="tsz14 btn btn-secondary topBottomGap leftGap">Добавить правило</button></div></div></div>';
-
+  <div class="under rightGap dottedBorder" style="width:100%;"><div class="form-group" style="text-align:left;width:100%;"><label class="col-form-label col-form-label-sm tsz14 leftGap" for="screenDestination">Экран назначения</label>\
+  <input type="text" class="form-control form-control-sm topBottomGap leftGap tsz14 transitionWidthS transitionHeight" onchange="updateTransitionScreen(this.value)" id="screenDestination'+local+'" placeholder="Сюда наверное стоит воткнуть выпадашку с экранами">\
+  <div id="rulesContainer'+local+'" class="under dottedBorder" style="width:100%;"></div></div>\
+  <div class="under rightGap" style="height:100%;"><button style="height:35px;width:148px;" onclick="addNewRule(this.value)" value="'+local+'" class="tsz14 btn btn-info topBottomGap leftGap">Добавить правило</button></div></div></div>';
+  var scrDest=document.getElementById("screenDestination"+local);
+  makeTransition(scrDest.value);
+  addTransitionToScreen();
 }
 
-function addNewRule(local)
+
+
+function addNewRule(_local)
 {
-  document.getElementById("rulesContainer"+local).innerHTML+= '<div class="under dottedBorder" style="text-align:left;margin: 0"><details style="text-align:left;"><summary>Правило</summary><div class="under rightGap"><label class="col-form-label col-form-label-sm tsz14 leftGap" for="componentSource">Компонент</label><input type="text" class="form-control form-control-sm topBottomGap leftGap tsz14 transitionWidthS" id="componentSource">\
-  </div><div class="under rightGap"><label for="predicateSelect" class="col-form-label col-form-label-sm tsz14 leftGap">Условие</label><select id="predicateSelect" class="form-select tsz14 leftGap topBottomGap transitionWidthM"><option value="Equal">Равно</option><option value="NotEqual">Неравно</option><option value="MoreThan">Больше чем</option>\
+  //debugger;
+  //var scrDest=document.getElementById("screenDestination"+_local);
+  let local=rulesPseudo.length;
+//сюда воткнуть автосохранение, без кнопки, и после сохранения идём в часть if(local!=0) и там надо по всм элеменам кроме последнего пройтись и заполнить по-новой все значения
+ // makeTransition(scrDest.value);
+  currentRule=makeRule();
+  rulesPseudo.push(currentRule);
+  addNewRuleToTransition();
+  console.log(_local);
+
+  document.getElementById("rulesContainer"+_local).innerHTML += '<details style="height:80%;width:100%;text-align:left;" id="'+local+'"><summary style="width:100%;">Правило</summary><div class="under rightGap"><label class="col-form-label col-form-label-sm tsz14 leftGap" for="componentSource">Компонент</label><input type="text" value="'+currentRule.componentName+'" class="form-control form-control-sm topBottomGap leftGap tsz14 transitionWidthS" id="componentSource'+local+'"></input>\
+  </div><div class="under rightGap"><label for="predicateSelect" class="col-form-label col-form-label-sm tsz14 leftGap">Условие</label><select selectedValue="'+currentRule.predicate+'" id="predicateSelect'+local+'" class="form-select tsz14 leftGap topBottomGap transitionWidthM"><option value="Equal">Равно</option><option value="NotEqual">Неравно</option><option value="MoreThan">Больше чем</option>\
 <option value="LessThan">Меньше чем</option><option value="Clicked">Безусловный переход</option></select></div>\
-<div class="under rightGap"><label for="valueForCompare" class="col-form-label col-form-label-sm tsz14 leftGap">Значение для сравнения</label><input type="text" class="form-control form-control-sm leftGap topBottomGap tsz14 transitionWidthS" id="valueForCompare"></div>\
-<div class="under rightGap"><button onclick="makeCondition()" style="height:35px;width:148px;" class=" tsz14 btn btn-secondary topBottomGap leftGap">Сохранить правило</button></div></details></div>';
+<div class="under rightGap"><label for="valueForCompare" class="col-form-label col-form-label-sm tsz14 leftGap">Значение для сравнения</label><input type="text" class="form-control form-control-sm leftGap topBottomGap tsz14 transitionWidthS" value="'+currentRule.value+'" id="valueForCompare'+local+'"></div>\
+<div class="under rightGap"><button onclick="saveRuleConditions(this.value)" style="height:35px;width:148px;" value="'+local+'" class=" tsz14 btn btn-success topBottomGap leftGap">Сохранить правило</button></div></details>';
+
+if(local!=0)
+{
+  console.log(local);
+  console.log("componentSource"+(local-1));
+  document.getElementById("componentSource"+(local-1)).value=rulesPseudo[0].componentName;
+}
 }
 
-function contextMenuShow()
+function saveRuleConditions(iterator)
 {
-  //todo - код отображения
-  return '<div class="modal">\
-    <div class="modal-dialog" role="document">\
-      <div class="modal-content">\
-        <div class="modal-header">\
-          <h5 class="modal-title">Modal title</h5>\
-          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close">\
-            <span aria-hidden="true"></span>\
-          </button>\
-        </div>\
-        <div class="modal-body">\
-          <p>Modal body text goes here.</p>\
-        </div>\
-        <div class="modal-footer">\
-          <button type="button" class="btn btn-primary">Save changes</button>\
-          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>\
-        </div>\
-      </div>\
-    </div>\
-  </div>';
+debugger;
+  let descr = '';//document.getElementById("componentSource"+local).value;
+  let cmpName = document.getElementById("componentSource"+iterator).value;
+  document.getElementById("componentSource"+iterator).value=cmpName;
+  let predicate = document.getElementById("predicateSelect"+iterator).value;
+  let val = document.getElementById("valueForCompare"+iterator).value;
+
+ 
+  currentRule=rulesPseudo[iterator];
+  currentRule.description = descr;
+  currentRule.componentName = cmpName;
+  currentRule.predicate = predicate;
+  currentRule.value=val;
 }
+
+function updateTransitionScreen(scr)
+{  
+  transition.nextScreen=scr;
+}
+
+function showAllTransitions()
+{
+  //в скрине текущем идём в транзишены, и идём по ним циклом.внутри транзишена по массиву двигаем ещё одним циклом. один транзишен - один вызов addExistedTransition с присвоением ему айдишника
+  //а вот всю внутрянку походов по рулам надо, вероятно, делать внутри addExistedTransition - то есть тот метод тож переписать половчее
+}
+
+function addExistedTransition()
+{
+  debugger;
+  let transitionArea = document.getElementById("transitions");
+  let local=rnd;
+  rnd++;
+
+  transitionArea.innerHTML += '<div class="under dottedBorder" style="position:relative;width:100%">\
+  <div class="under rightGap dottedBorder" style="width:100%;"><div class="form-group" style="text-align:left;width:100%;"><label class="col-form-label col-form-label-sm tsz14 leftGap" for="screenDestination">Экран назначения</label>\
+  <input type="text" class="form-control form-control-sm topBottomGap leftGap tsz14 transitionWidthS transitionHeight" onchange="updateTransitionScreen(this.value)" id="screenDestination'+local+'" placeholder="Сюда наверное стоит воткнуть выпадашку с экранами">\
+  <div id="rulesContainer'+local+'" class="under dottedBorder" style="width:100%;"></div></div>\
+  <div class="under rightGap" style="height:100%;"><button style="height:35px;width:148px;" onclick="addNewRule(this.value)" value="'+local+'" class="tsz14 btn btn-info topBottomGap leftGap">Добавить правило</button></div></div></div>';
+  var scrDest=document.getElementById("screenDestination"+local);
+
+}
+
+function addExistedRule(_local)
+{
+
+  //var scrDest=document.getElementById("screenDestination"+_local);
+  let local=rulesPseudo.length;
+
+ // makeTransition(scrDest.value);
+  rulesPseudo.push(currentRule);
+  currentRule=rulesPseudo(_local);
+  document.getElementById("rulesContainer"+_local).innerHTML+= '<details style="height:80%;width:100%;text-align:left;" id="'+local+'"><summary style="width:100%;">Правило</summary><div class="under rightGap"><label class="col-form-label col-form-label-sm tsz14 leftGap" for="componentSource">Компонент</label><input type="text" value="'+currentRule.componentName+'" class="form-control form-control-sm topBottomGap leftGap tsz14 transitionWidthS" id="componentSource'+local+'"></input>\
+  </div><div class="under rightGap"><label for="predicateSelect" class="col-form-label col-form-label-sm tsz14 leftGap">Условие</label><select selectedValue="'+currentRule.predicate+'" id="predicateSelect'+local+'" class="form-select tsz14 leftGap topBottomGap transitionWidthM"><option value="Equal">Равно</option><option value="NotEqual">Неравно</option><option value="MoreThan">Больше чем</option>\
+<option value="LessThan">Меньше чем</option><option value="Clicked">Безусловный переход</option></select></div>\
+<div class="under rightGap"><label for="valueForCompare" class="col-form-label col-form-label-sm tsz14 leftGap">Значение для сравнения</label><input type="text" class="form-control form-control-sm leftGap topBottomGap tsz14 transitionWidthS" value="'+currentRule.value+'" id="valueForCompare'+local+'"></div>\
+<div class="under rightGap"><button onclick="saveRuleConditions(this.value)" style="height:35px;width:148px;" value="'+local+'" class=" tsz14 btn btn-success topBottomGap leftGap">Сохранить правило</button></div></details>';
+}
+
