@@ -17,6 +17,7 @@ let rnd = 0;
 let transForChoose = -1;
 let ruleForChoose = -1;
 
+let tempScreenNum=0;
 
 let rulesPseudo = new Array();
 
@@ -65,6 +66,8 @@ function addNewRuleToTransition() {
 }
 
 function addTransitionToScreen() {
+  console.log("screen is "+currentScreenObject.name);
+  console.log("transitions are "+currentScreenObject.transitions.length);
   currentScreenObject.transitions.push(transition);
 }
 
@@ -77,6 +80,8 @@ function getScreenData(screenName) {
 }
 
 function saveScreenToList() {
+  if(currentScreenObject.name==='')
+  currentScreenObject.name='temp'+(tempScreenNum++);
   if (screenList.length === 0) {
     screenList.push(currentScreenObject);
     showScreensAtContainer();
@@ -161,6 +166,7 @@ function showNewScreen(element) {
   showPublishButton();
   showGetDcenarioButton();
   addTransitionRulesButton();
+  saveScreenToList()
 }
 
 function showScreen(identity) {
@@ -396,8 +402,8 @@ function deleteTransition(transI) {
 function addNewTransition() {
 
   let transitionArea = document.getElementById("transitions");
-  let local = rnd;
-  rnd++;
+  let local = currentScreenObject.transitions.length;//rnd;
+  //rnd++;
   last = 0;
   transitionArea.innerHTML += '<div class="under dottedBorder" onclick="loadCurrentRule(\'' + local + '\')" style="position:relative;width:100%">\
   <div class="under rightGap dottedBorder" style="width:100%;"><div class="form-group" style="text-align:left;width:100%;"><label class="col-form-label col-form-label-sm tsz14 leftGap" for="screenDestination">Экран назначения</label>\
@@ -413,7 +419,7 @@ function addNewTransition() {
 
 function addNewRule(_local) {
   let local = 0;
-
+  console.log("_local is "+_local);
   local = currentScreenObject.transitions[_local].rules.length;
 
   //local=rulesPseudo.length;
